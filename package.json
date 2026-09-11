@@ -1,0 +1,22 @@
+{
+  "name": "githubtest-dummy-project",
+  "version": "1.0.0",
+  "description": "A dummy Node.js project used for testing tooling, CI and workflows.",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "demo": "node src/index.js demo",
+    "test": "node --test test/",
+    "lint": "node -e \"console.log('lint: no linter configured, skipping')\""
+  },
+  "keywords": [
+    "dummy",
+    "sample",
+    "testing"
+  ],
+  "author": "githubtest",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
