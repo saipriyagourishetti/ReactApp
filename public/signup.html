@@ -14,7 +14,19 @@
           <span class="brand-mark">◆</span>
           <span>DummyProject</span>
         </a>
-        <a class="btn btn-ghost btn-sm" href="/">Back to home</a>
+        <ul class="nav-links">
+          <li><a href="/about.html">About</a></li>
+          <li><a href="/dashboard.html">Dashboard</a></li>
+          <li><a href="/#features">Features</a></li>
+          <li><a href="/#pricing">Pricing</a></li>
+        </ul>
+        <div class="nav-actions">
+          <button class="hamburger" aria-label="Toggle navigation" aria-expanded="false">
+            <span></span><span></span><span></span>
+          </button>
+          <a class="btn btn-ghost btn-sm" href="/">Home</a>
+          <a class="btn btn-ghost btn-sm" href="/login.html">Log in</a>
+        </div>
       </nav>
     </header>
 
@@ -114,7 +126,11 @@
             <p class="form-status" id="form-status" role="status" aria-live="polite"></p>
           </form>
 
-          <p class="auth-footer">Already have an account? <a href="/login.html">Log in instead</a></p>
+          <p class="auth-footer">
+            Already have an account? <a href="/login.html">Log in instead</a> &middot;
+            <a href="/about.html">About</a> &middot;
+            <a href="/dashboard.html">Dashboard</a>
+          </p>
         </section>
       </div>
     </main>

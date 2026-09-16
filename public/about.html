@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>About &mdash; DummyProject</title>
+    <meta name="description" content="Learn about the DummyProject team, mission, and milestones." />
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <nav class="nav container">
+        <a class="brand" href="/">
+          <span class="brand-mark">◆</span>
+          <span>DummyProject</span>
+        </a>
+        <ul class="nav-links">
+          <li><a href="/about.html" style="color:var(--text);">About</a></li>
+          <li><a href="/dashboard.html">Dashboard</a></li>
+          <li><a href="/#features">Features</a></li>
+          <li><a href="/#pricing">Pricing</a></li>
+        </ul>
+        <div class="nav-actions">
+          <button class="hamburger" aria-label="Toggle navigation" aria-expanded="false">
+            <span></span><span></span><span></span>
+          </button>
+          <a class="btn btn-ghost btn-sm" href="/login.html">Log in</a>
+          <a class="btn btn-primary btn-sm" href="/signup.html">Get started</a>
+        </div>
+      </nav>
+    </header>
+
+    <main>
+      <!-- Mission hero -->
+      <section class="mission-hero">
+        <div class="container" style="max-width:780px;">
+          <p class="eyebrow">Our mission</p>
+          <h1>Build faster by starting with <span class="accent">less</span></h1>
+          <p class="lead">
+            DummyProject exists to prove that you don't need a 300-package dependency tree to ship
+            a working product. We believe great software starts small, stays readable, and grows
+            intentionally.
+          </p>
+        </div>
+      </section>
+
+      <!-- Values -->
+      <section class="section" id="values">
+        <div class="container" style="max-width:780px;">
+          <h2 class="section-title">What we believe in</h2>
+          <p class="section-sub">Three principles guide every decision we make.</p>
+
+          <div class="card-grid">
+            <article class="card">
+              <div class="card-icon">◎</div>
+              <h3>Zero waste</h3>
+              <p>
+                No runtime dependencies. No build step. No bundler. If something can be done with
+                standard Node.js, that's how we do it.
+              </p>
+            </article>
+
+            <article class="card">
+              <div class="card-icon">⚡</div>
+              <h3>Radical transparency</h3>
+              <p>
+                Every line of code is readable, deletable, and replaceable. There are no magic
+                abstractions hiding from you.
+              </p>
+            </article>
+
+            <article class="card">
+              <div class="card-icon">∑</div>
+              <h3>Tested by default</h3>
+              <p>
+                We ship tests alongside every module using Node's built-in test runner &mdash; no
+                framework required, no excuses.
+              </p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <!-- Team -->
+      <section class="section section-alt" id="team">
+        <div class="container" style="max-width:780px;">
+          <h2 class="section-title">Meet the team</h2>
+          <p class="section-sub">A small, focused group of people who love clean code.</p>
+
+          <div class="team-grid">
+            <div class="team-card">
+              <div class="team-avatar" style="background:linear-gradient(135deg,var(--accent),#8c6cff);">AL</div>
+              <h3>Ada Lovelace</h3>
+              <p class="team-role">Founder &amp; Engineer</p>
+              <p>First programmer. Coined the algorithm. Still writes the fastest code in the room.</p>
+            </div>
+
+            <div class="team-card">
+              <div class="team-avatar" style="background:linear-gradient(135deg,var(--accent-2),#2db5a6);">GH</div>
+              <h3>Grace Hopper</h3>
+              <p class="team-role">Compiler Architect</p>
+              <p>Invented the compiler. Keeps our zero-dep promise honest on every pull request.</p>
+            </div>
+
+            <div class="team-card">
+              <div class="team-avatar" style="background:linear-gradient(135deg,var(--accent-3),#d4891a);">AT</div>
+              <h3>Alan Turing</h3>
+              <p class="team-role">Core Algorithms</p>
+              <p>Settled the halting problem. Settles our test suite before every release.</p>
+            </div>
+
+            <div class="team-card">
+              <div class="team-avatar" style="background:linear-gradient(135deg,var(--danger),#c94060);">DN</div>
+              <h3>Dorothy Vaughan</h3>
+              <p class="team-role">Infrastructure</p>
+              <p>Pioneered FORTRAN programming. Makes sure our server boots in under 50ms.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Timeline -->
+      <section class="section" id="timeline">
+        <div class="container" style="max-width:780px;">
+          <h2 class="section-title">Our journey</h2>
+          <p class="section-sub">A few milestones we're proud of.</p>
+
+          <ul class="timeline" style="margin-top:40px;">
+            <li class="timeline-item">
+              <span class="timeline-year">2023</span>
+              <h3>Zero to one</h3>
+              <p>
+                Started as a weekend experiment: a static server, a user store, and a calculator —
+                all in pure Node.js with not a single npm package.
+              </p>
+            </li>
+
+            <li class="timeline-item">
+              <span class="timeline-year">2024 Q1</span>
+              <h3>Signup flow ships</h3>
+              <p>
+                Added the signup and login pages, a full scrypt-based auth flow, and the public
+                landing page — still zero runtime dependencies.
+              </p>
+            </li>
+
+            <li class="timeline-item">
+              <span class="timeline-year">2024 Q3</span>
+              <h3>Test suite reaches 100% coverage</h3>
+              <p>
+                Every exported function in <code>calculator.js</code> and <code>userStore.js</code>
+                is covered by the built-in <code>node:test</code> runner.
+              </p>
+            </li>
+
+            <li class="timeline-item">
+              <span class="timeline-year">2025</span>
+              <h3>Dashboard, Profile &amp; About</h3>
+              <p>
+                Expanded the UI with three new pages — a live dashboard, a profile settings panel,
+                and this very about page. Still. Zero. Dependencies.
+              </p>
+            </li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- CTA -->
+      <section class="cta">
+        <div class="container cta-inner">
+          <h2>Ready to build something small?</h2>
+          <p>Join the growing community of developers who ship without the bloat.</p>
+          <div style="display:flex; gap:14px; justify-content:center; flex-wrap:wrap;">
+            <a class="btn btn-primary btn-lg" href="/signup.html">Create free account</a>
+            <a class="btn btn-ghost btn-lg" href="/dashboard.html">View Dashboard</a>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="container footer-inner">
+        <p>&copy; <span id="year">2025</span> DummyProject &middot; MIT licensed</p>
+        <ul class="footer-links">
+          <li><a href="/">Home</a></li>
+          <li><a href="/dashboard.html">Dashboard</a></li>
+          <li><a href="/profile.html">Profile</a></li>
+          <li><a href="/signup.html">Sign up</a></li>
+          <li><a href="/login.html">Log in</a></li>
+        </ul>
+      </div>
+    </footer>
+
+    <script src="/app.js"></script>
+  </body>
+</html>

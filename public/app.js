@@ -212,4 +212,25 @@
 
   initSignup();
   initLogin();
+
+  /* ---------------- Shared UI ---------------- */
+
+  // Update copyright year on any page using class="year" or id="year"
+  document.querySelectorAll('.year, #year').forEach(function (el) {
+    el.textContent = new Date().getFullYear();
+  });
+
+  // Hamburger mobile nav toggle
+  // Use querySelectorAll so pages with multiple hamburgers (e.g. future
+  // nested layouts) work correctly. Use closest('header') so each button
+  // toggles only its own enclosing header, not a global querySelector match.
+  document.querySelectorAll('.hamburger').forEach(function (btn) {
+    const navHeader = btn.closest('header');
+    if (navHeader) {
+      btn.addEventListener('click', function () {
+        const open = navHeader.classList.toggle('nav-open');
+        btn.setAttribute('aria-expanded', String(open));
+      });
+    }
+  });
 })();

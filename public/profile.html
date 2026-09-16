@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Profile &mdash; DummyProject</title>
+    <meta name="description" content="Manage your DummyProject profile and settings." />
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body class="auth-body">
+    <header class="site-header">
+      <nav class="nav container">
+        <a class="brand" href="/">
+          <span class="brand-mark">◆</span>
+          <span>DummyProject</span>
+        </a>
+        <ul class="nav-links">
+          <li><a href="/about.html">About</a></li>
+          <li><a href="/dashboard.html">Dashboard</a></li>
+          <li><a href="/#features">Features</a></li>
+          <li><a href="/#pricing">Pricing</a></li>
+        </ul>
+        <div class="nav-actions">
+          <button class="hamburger" aria-label="Toggle navigation" aria-expanded="false">
+            <span></span><span></span><span></span>
+          </button>
+          <a class="btn btn-ghost btn-sm" href="/dashboard.html">Dashboard</a>
+          <a class="btn btn-primary btn-sm" href="/signup.html">Get started</a>
+        </div>
+      </nav>
+    </header>
+
+    <main class="auth-main">
+      <div class="container auth-grid">
+
+        <!-- Left: Profile aside -->
+        <section class="auth-aside">
+          <div class="profile-aside">
+            <div class="avatar-lg" aria-hidden="true">AL</div>
+
+            <div>
+              <h2 style="margin: 0 0 4px; font-size: 1.4rem;">Ada Lovelace</h2>
+              <span class="role-badge">Administrator</span>
+            </div>
+
+            <p>Building the future with zero dependencies and a whole lot of curiosity.</p>
+
+            <div class="profile-stats-row" style="width:100%;">
+              <div class="profile-stat">
+                <span class="profile-stat-num accent">12</span>
+                <span class="profile-stat-label">Sessions</span>
+              </div>
+              <div class="profile-stat">
+                <span class="profile-stat-num" style="color:var(--accent-2);">4</span>
+                <span class="profile-stat-label">Projects</span>
+              </div>
+              <div class="profile-stat">
+                <span class="profile-stat-num" style="color:var(--accent-3);">98</span>
+                <span class="profile-stat-label">Requests</span>
+              </div>
+            </div>
+
+            <div style="width:100%; font-size:0.88rem; color:var(--muted); text-align:left; display:flex; flex-direction:column; gap:8px;">
+              <div style="display:flex; align-items:center; gap:8px;">
+                <span style="color:var(--accent-2);">◎</span>
+                <span>Member since <strong style="color:var(--text);">Jan 2025</strong></span>
+              </div>
+              <div style="display:flex; align-items:center; gap:8px;">
+                <span style="color:var(--accent-2);">⚡</span>
+                <span>Last login <strong style="color:var(--text);">today</strong></span>
+              </div>
+              <div style="display:flex; align-items:center; gap:8px;">
+                <span style="color:var(--accent-2);">◇</span>
+                <span>Plan <strong style="color:var(--text);">Free forever</strong></span>
+              </div>
+            </div>
+
+            <div class="demo-hint" style="width:100%;">
+              <strong>Demo mode</strong>
+              <p>Changes here are illustrative — no API call is made. The in-memory store resets on server restart.</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- Right: Edit form -->
+        <section class="auth-card">
+          <h1>Edit Profile</h1>
+          <p class="auth-sub">Update your display name, bio, and notification preferences.</p>
+
+          <form id="profile-form" novalidate>
+            <div class="field">
+              <label for="display-name">Display name</label>
+              <input
+                id="display-name"
+                name="display-name"
+                type="text"
+                autocomplete="name"
+                placeholder="Ada Lovelace"
+                value="Ada Lovelace"
+              />
+              <p class="error" data-error-for="display-name"></p>
+            </div>
+
+            <div class="field">
+              <label for="profile-email">Email address <span style="color:var(--muted); font-weight:400;">(read-only in demo)</span></label>
+              <input
+                id="profile-email"
+                name="email"
+                type="email"
+                value="ada@example.com"
+                readonly
+                style="opacity:0.6; cursor:not-allowed;"
+              />
+            </div>
+
+            <div class="field">
+              <label for="bio">Bio</label>
+              <textarea
+                id="bio"
+                name="bio"
+                rows="3"
+                placeholder="Tell us a bit about yourself..."
+                style="width:100%; padding:12px 14px; border:1px solid var(--border); border-radius:var(--radius-sm); background:rgba(255,255,255,0.04); color:var(--text); font-size:0.97rem; font-family:inherit; resize:vertical; transition:border-color 0.15s ease, box-shadow 0.15s ease;"
+              >First programmer. Mathematics enthusiast. Node.js fan.</textarea>
+              <p class="error" data-error-for="bio"></p>
+            </div>
+
+            <div class="field">
+              <label for="profile-role">Role <span style="color:var(--muted); font-weight:400;">(disabled in demo)</span></label>
+              <select id="profile-role" name="role" disabled style="opacity:0.6; cursor:not-allowed;">
+                <option value="user">User</option>
+                <option value="editor">Editor</option>
+                <option value="admin" selected>Admin</option>
+              </select>
+            </div>
+
+            <div style="margin-bottom: 16px;">
+              <p style="font-size:0.9rem; font-weight:600; margin: 0 0 10px;">Notifications</p>
+              <div class="toggle-field">
+                <div>
+                  <div class="toggle-label">Email alerts</div>
+                  <div class="toggle-desc">Receive signup and login notifications</div>
+                </div>
+                <label class="toggle-switch">
+                  <input type="checkbox" checked />
+                  <span class="toggle-slider"></span>
+                </label>
+              </div>
+              <div class="toggle-field">
+                <div>
+                  <div class="toggle-label">Weekly digest</div>
+                  <div class="toggle-desc">Summary of activity every Monday</div>
+                </div>
+                <label class="toggle-switch">
+                  <input type="checkbox" />
+                  <span class="toggle-slider"></span>
+                </label>
+              </div>
+              <div class="toggle-field">
+                <div>
+                  <div class="toggle-label">Security alerts</div>
+                  <div class="toggle-desc">Notify on suspicious login attempts</div>
+                </div>
+                <label class="toggle-switch">
+                  <input type="checkbox" checked />
+                  <span class="toggle-slider"></span>
+                </label>
+              </div>
+            </div>
+
+            <button class="btn btn-primary btn-block" type="submit" id="profile-submit-btn">
+              Save changes
+            </button>
+
+            <p class="form-status" id="profile-status" role="status" aria-live="polite"></p>
+          </form>
+
+          <p class="auth-footer">
+            View your activity on the <a href="/dashboard.html">Dashboard</a> &middot;
+            <a href="/about.html">About</a>
+          </p>
+        </section>
+      </div>
+    </main>
+
+    <footer class="site-footer">
+      <div class="container footer-inner">
+        <p>&copy; <span id="year">2025</span> DummyProject &middot; MIT licensed</p>
+        <ul class="footer-links">
+          <li><a href="/">Home</a></li>
+          <li><a href="/about.html">About</a></li>
+          <li><a href="/dashboard.html">Dashboard</a></li>
+          <li><a href="/signup.html">Sign up</a></li>
+          <li><a href="/login.html">Log in</a></li>
+        </ul>
+      </div>
+    </footer>
+
+    <script src="/app.js"></script>
+    <script>
+      // Profile form demo submit (page-specific)
+      const profileForm = document.getElementById('profile-form');
+      const profileStatus = document.getElementById('profile-status');
+      if (profileForm) {
+        profileForm.addEventListener('submit', function (e) {
+          e.preventDefault();
+          const btn = document.getElementById('profile-submit-btn');
+          btn.disabled = true;
+          btn.textContent = 'Saving…';
+          setTimeout(function () {
+            profileStatus.textContent = 'Profile updated successfully (demo — no data persisted).';
+            profileStatus.className = 'form-status success';
+            btn.disabled = false;
+            btn.textContent = 'Save changes';
+          }, 800);
+        });
+      }
+    </script>
+  </body>
+</html>
