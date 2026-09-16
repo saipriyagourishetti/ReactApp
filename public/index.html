@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Dummy Project &mdash; Build, test, ship faster</title>
+    <meta
+      name="description"
+      content="A zero-dependency Node.js sample app with a landing page and signup flow."
+    />
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <nav class="nav container">
+        <a class="brand" href="/">
+          <span class="brand-mark">◆</span>
+          <span>DummyProject</span>
+        </a>
+        <ul class="nav-links">
+          <li><a href="#features">Features</a></li>
+          <li><a href="#how-it-works">How it works</a></li>
+          <li><a href="#pricing">Pricing</a></li>
+        </ul>
+        <a class="btn btn-primary btn-sm" href="/signup.html">Get started</a>
+      </nav>
+    </header>
+
+    <main>
+      <section class="hero">
+        <div class="container hero-grid">
+          <div class="hero-copy">
+            <p class="eyebrow">Zero dependencies &middot; Node 18+</p>
+            <h1>Ship your side project <span class="accent">before the weekend ends</span></h1>
+            <p class="lead">
+              A tiny, dependency-free starter with a calculator module, an in-memory user store,
+              and a ready-to-use signup flow. No build step, no bundler, no npm install.
+            </p>
+            <div class="hero-actions">
+              <a class="btn btn-primary" href="/signup.html">Create free account</a>
+              <a class="btn btn-ghost" href="#features">See what's inside</a>
+            </div>
+            <ul class="hero-badges">
+              <li>✓ No credit card</li>
+              <li>✓ Runs offline</li>
+              <li>✓ MIT licensed</li>
+            </ul>
+          </div>
+
+          <div class="hero-visual" aria-hidden="true">
+            <div class="code-card">
+              <div class="code-dots"><span></span><span></span><span></span></div>
+              <pre><code>$ npm start
+
+=&gt; Server listening on
+   http://localhost:3000
+
+GET  /              200
+GET  /signup.html   200
+POST /api/signup    201</code></pre>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="features">
+        <div class="container">
+          <h2 class="section-title">Everything you need, nothing you don't</h2>
+          <p class="section-sub">Small, readable modules you can delete or extend in minutes.</p>
+
+          <div class="card-grid">
+            <article class="card">
+              <div class="card-icon">∑</div>
+              <h3>Calculator module</h3>
+              <p>
+                Pure functions for arithmetic, sums and averages &mdash; fully covered by the
+                built-in <code>node --test</code> runner.
+              </p>
+            </article>
+
+            <article class="card">
+              <div class="card-icon">◎</div>
+              <h3>In-memory user store</h3>
+              <p>
+                CRUD operations with validation, duplicate-email protection and role filtering.
+                Swap it for a real database whenever you're ready.
+              </p>
+            </article>
+
+            <article class="card">
+              <div class="card-icon">⚡</div>
+              <h3>Static server</h3>
+              <p>
+                A single <code>http</code> server serves this landing page and handles the signup
+                API &mdash; no Express, no middleware chain.
+              </p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="section section-alt" id="how-it-works">
+        <div class="container">
+          <h2 class="section-title">Three steps to a running app</h2>
+          <ol class="steps">
+            <li>
+              <span class="step-num">1</span>
+              <h3>Clone the repo</h3>
+              <p>Everything lives in <code>src/</code> and <code>public/</code>.</p>
+            </li>
+            <li>
+              <span class="step-num">2</span>
+              <h3>Run <code>npm start</code></h3>
+              <p>The server boots instantly &mdash; there is nothing to install.</p>
+            </li>
+            <li>
+              <span class="step-num">3</span>
+              <h3>Sign up and iterate</h3>
+              <p>Create an account and watch it land in the user store.</p>
+            </li>
+          </ol>
+        </div>
+      </section>
+
+      <section class="section" id="pricing">
+        <div class="container">
+          <h2 class="section-title">Honest pricing</h2>
+          <p class="section-sub">It's a demo project. It's free. Forever.</p>
+
+          <div class="pricing-grid">
+            <article class="price-card">
+              <h3>Hobby</h3>
+              <p class="price">$0<span>/mo</span></p>
+              <ul>
+                <li>Unlimited local users</li>
+                <li>Calculator module</li>
+                <li>Community support</li>
+              </ul>
+              <a class="btn btn-ghost" href="/signup.html">Start now</a>
+            </article>
+
+            <article class="price-card featured">
+              <span class="ribbon">Popular</span>
+              <h3>Team</h3>
+              <p class="price">$0<span>/mo</span></p>
+              <ul>
+                <li>Everything in Hobby</li>
+                <li>Role-based accounts</li>
+                <li>Signup API endpoint</li>
+              </ul>
+              <a class="btn btn-primary" href="/signup.html">Create account</a>
+            </article>
+
+            <article class="price-card">
+              <h3>Enterprise</h3>
+              <p class="price">$0<span>/mo</span></p>
+              <ul>
+                <li>Everything in Team</li>
+                <li>Self-hosted by design</li>
+                <li>MIT license</li>
+              </ul>
+              <a class="btn btn-ghost" href="/signup.html">Get started</a>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="cta">
+        <div class="container cta-inner">
+          <h2>Ready to build something small?</h2>
+          <p>Create your account and start poking at the code.</p>
+          <a class="btn btn-primary btn-lg" href="/signup.html">Sign up free</a>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="container footer-inner">
+        <p>&copy; <span id="year">2025</span> DummyProject &middot; MIT licensed</p>
+        <ul class="footer-links">
+          <li><a href="/signup.html">Sign up</a></li>
+          <li><a href="#features">Features</a></li>
+          <li><a href="#pricing">Pricing</a></li>
+        </ul>
+      </div>
+    </footer>
+
+    <script>
+      document.getElementById('year').textContent = new Date().getFullYear();
+    </script>
+  </body>
+</html>

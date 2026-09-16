@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Create your account &mdash; DummyProject</title>
+    <meta name="description" content="Create a free DummyProject account." />
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body class="auth-body">
+    <header class="site-header">
+      <nav class="nav container">
+        <a class="brand" href="/">
+          <span class="brand-mark">◆</span>
+          <span>DummyProject</span>
+        </a>
+        <a class="btn btn-ghost btn-sm" href="/">Back to home</a>
+      </nav>
+    </header>
+
+    <main class="auth-main">
+      <div class="container auth-grid">
+        <section class="auth-aside">
+          <h2>Join the demo</h2>
+          <p>
+            Accounts are stored in an in-memory <code>UserStore</code>. Restart the server and
+            they're gone &mdash; perfect for experimenting.
+          </p>
+          <ul class="checklist">
+            <li>Instant account creation</li>
+            <li>Email uniqueness validation</li>
+            <li>Role selection (user, editor, admin)</li>
+            <li>No tracking, no cookies</li>
+          </ul>
+        </section>
+
+        <section class="auth-card">
+          <h1>Create your account</h1>
+          <p class="auth-sub">Takes about 20 seconds.</p>
+
+          <form id="signup-form" novalidate>
+            <div class="field">
+              <label for="name">Full name</label>
+              <input
+                id="name"
+                name="name"
+                type="text"
+                autocomplete="name"
+                placeholder="Ada Lovelace"
+                required
+              />
+              <p class="error" data-error-for="name"></p>
+            </div>
+
+            <div class="field">
+              <label for="email">Email address</label>
+              <input
+                id="email"
+                name="email"
+                type="email"
+                autocomplete="email"
+                placeholder="ada@example.com"
+                required
+              />
+              <p class="error" data-error-for="email"></p>
+            </div>
+
+            <div class="field">
+              <label for="password">Password</label>
+              <input
+                id="password"
+                name="password"
+                type="password"
+                autocomplete="new-password"
+                placeholder="At least 8 characters"
+                required
+              />
+              <p class="hint">Use 8+ characters with a mix of letters and numbers.</p>
+              <p class="error" data-error-for="password"></p>
+            </div>
+
+            <div class="field">
+              <label for="confirm">Confirm password</label>
+              <input
+                id="confirm"
+                name="confirm"
+                type="password"
+                autocomplete="new-password"
+                placeholder="Repeat your password"
+                required
+              />
+              <p class="error" data-error-for="confirm"></p>
+            </div>
+
+            <div class="field">
+              <label for="role">Role</label>
+              <select id="role" name="role">
+                <option value="user">User</option>
+                <option value="editor">Editor</option>
+                <option value="admin">Admin</option>
+              </select>
+            </div>
+
+            <label class="checkbox">
+              <input id="terms" name="terms" type="checkbox" />
+              <span>I agree to the terms of service and privacy policy.</span>
+            </label>
+            <p class="error" data-error-for="terms"></p>
+
+            <button class="btn btn-primary btn-block" type="submit" id="submit-btn">
+              Create account
+            </button>
+
+            <p class="form-status" id="form-status" role="status" aria-live="polite"></p>
+          </form>
+
+          <p class="auth-footer">Already have an account? <a href="/">Back to the landing page</a></p>
+        </section>
+      </div>
+    </main>
+
+    <script src="/app.js"></script>
+  </body>
+</html>
