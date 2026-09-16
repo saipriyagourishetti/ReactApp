@@ -9,30 +9,67 @@
       content="A zero-dependency Node.js sample app with a landing page and signup flow."
     />
     <link rel="stylesheet" href="/styles.css" />
+    <script>
+      // Apply the saved theme before first paint to avoid a flash of the wrong colours.
+      (function () {
+        try {
+          var saved = localStorage.getItem('dp-theme');
+          var theme =
+            saved ||
+            (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+          document.documentElement.setAttribute('data-theme', theme);
+        } catch (e) {
+          document.documentElement.setAttribute('data-theme', 'dark');
+        }
+      })();
+    </script>
   </head>
   <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <div class="scroll-progress" data-scroll-progress aria-hidden="true"></div>
+
     <header class="site-header">
       <nav class="nav container">
         <a class="brand" href="/">
           <span class="brand-mark">◆</span>
           <span>DummyProject</span>
         </a>
-        <ul class="nav-links">
+        <ul class="nav-links" id="nav-links">
           <li><a href="#features">Features</a></li>
           <li><a href="#how-it-works">How it works</a></li>
           <li><a href="#pricing">Pricing</a></li>
         </ul>
         <div class="nav-actions">
+          <button
+            class="icon-btn theme-toggle"
+            type="button"
+            data-theme-toggle
+            aria-pressed="false"
+            aria-label="Switch theme"
+          >
+            <span data-theme-icon aria-hidden="true">☀</span>
+            <span data-theme-label>Light</span>
+          </button>
           <a class="btn btn-ghost btn-sm" href="/login.html">Log in</a>
           <a class="btn btn-primary btn-sm" href="/signup.html">Get started</a>
+          <button
+            class="icon-btn nav-toggle"
+            type="button"
+            data-nav-toggle
+            aria-controls="nav-links"
+            aria-expanded="false"
+            aria-label="Toggle navigation menu"
+          >
+            <span></span><span></span><span></span>
+          </button>
         </div>
       </nav>
     </header>
 
-    <main>
+    <main id="main">
       <section class="hero">
         <div class="container hero-grid">
-          <div class="hero-copy">
+          <div class="hero-copy" data-reveal>
             <p class="eyebrow">Zero dependencies &middot; Node 18+</p>
             <h1>Ship your side project <span class="accent">before the weekend ends</span></h1>
             <p class="lead">
@@ -50,10 +87,17 @@
             </ul>
           </div>
 
-          <div class="hero-visual" aria-hidden="true">
+          <div class="hero-visual" data-reveal data-reveal-delay="140">
             <div class="code-card">
-              <div class="code-dots"><span></span><span></span><span></span></div>
-              <pre><code>$ npm start
+              <div class="code-head">
+                <div class="code-dots" aria-hidden="true">
+                  <span></span><span></span><span></span>
+                </div>
+                <button class="copy-btn" type="button" data-copy="#terminal-snippet">
+                  Copy
+                </button>
+              </div>
+              <pre><code id="terminal-snippet">$ npm start
 
 =&gt; Server listening on
    http://localhost:3000
@@ -66,15 +110,38 @@ POST /api/login     200</code></pre>
             </div>
           </div>
         </div>
+
+        <div class="container">
+          <ul class="stats" data-reveal>
+            <li class="stat">
+              <span class="stat-value" data-count-to="0">0</span>
+              <span class="stat-label">Runtime dependencies</span>
+            </li>
+            <li class="stat">
+              <span class="stat-value" data-count-to="100" data-count-suffix="%">0%</span>
+              <span class="stat-label">Plain JavaScript</span>
+            </li>
+            <li class="stat">
+              <span class="stat-value" data-count-to="3" data-count-suffix=" s">0 s</span>
+              <span class="stat-label">Cold start to running</span>
+            </li>
+            <li class="stat">
+              <span class="stat-value" data-count-to="24" data-count-suffix="+">0+</span>
+              <span class="stat-label">Unit tests included</span>
+            </li>
+          </ul>
+        </div>
       </section>
 
       <section class="section" id="features">
         <div class="container">
-          <h2 class="section-title">Everything you need, nothing you don't</h2>
-          <p class="section-sub">Small, readable modules you can delete or extend in minutes.</p>
+          <h2 class="section-title" data-reveal>Everything you need, nothing you don't</h2>
+          <p class="section-sub" data-reveal>
+            Small, readable modules you can delete or extend in minutes.
+          </p>
 
           <div class="card-grid">
-            <article class="card">
+            <article class="card" data-reveal>
               <div class="card-icon">∑</div>
               <h3>Calculator module</h3>
               <p>
@@ -83,7 +150,7 @@ POST /api/login     200</code></pre>
               </p>
             </article>
 
-            <article class="card">
+            <article class="card" data-reveal data-reveal-delay="110">
               <div class="card-icon">◎</div>
               <h3>In-memory user store</h3>
               <p>
@@ -92,7 +159,7 @@ POST /api/login     200</code></pre>
               </p>
             </article>
 
-            <article class="card">
+            <article class="card" data-reveal data-reveal-delay="220">
               <div class="card-icon">⚡</div>
               <h3>Static server</h3>
               <p>
@@ -106,19 +173,19 @@ POST /api/login     200</code></pre>
 
       <section class="section section-alt" id="how-it-works">
         <div class="container">
-          <h2 class="section-title">Three steps to a running app</h2>
+          <h2 class="section-title" data-reveal>Three steps to a running app</h2>
           <ol class="steps">
-            <li>
+            <li data-reveal>
               <span class="step-num">1</span>
               <h3>Clone the repo</h3>
               <p>Everything lives in <code>src/</code> and <code>public/</code>.</p>
             </li>
-            <li>
+            <li data-reveal data-reveal-delay="110">
               <span class="step-num">2</span>
               <h3>Run <code>npm start</code></h3>
               <p>The server boots instantly &mdash; there is nothing to install.</p>
             </li>
-            <li>
+            <li data-reveal data-reveal-delay="220">
               <span class="step-num">3</span>
               <h3>Sign up and iterate</h3>
               <p>Create an account and watch it land in the user store.</p>
@@ -129,11 +196,11 @@ POST /api/login     200</code></pre>
 
       <section class="section" id="pricing">
         <div class="container">
-          <h2 class="section-title">Honest pricing</h2>
-          <p class="section-sub">It's a demo project. It's free. Forever.</p>
+          <h2 class="section-title" data-reveal>Honest pricing</h2>
+          <p class="section-sub" data-reveal>It's a demo project. It's free. Forever.</p>
 
           <div class="pricing-grid">
-            <article class="price-card">
+            <article class="price-card" data-reveal>
               <h3>Hobby</h3>
               <p class="price">$0<span>/mo</span></p>
               <ul>
@@ -144,7 +211,7 @@ POST /api/login     200</code></pre>
               <a class="btn btn-ghost" href="/signup.html">Start now</a>
             </article>
 
-            <article class="price-card featured">
+            <article class="price-card featured" data-reveal data-reveal-delay="110">
               <span class="ribbon">Popular</span>
               <h3>Team</h3>
               <p class="price">$0<span>/mo</span></p>
@@ -156,7 +223,7 @@ POST /api/login     200</code></pre>
               <a class="btn btn-primary" href="/signup.html">Create account</a>
             </article>
 
-            <article class="price-card">
+            <article class="price-card" data-reveal data-reveal-delay="220">
               <h3>Enterprise</h3>
               <p class="price">$0<span>/mo</span></p>
               <ul>
@@ -171,7 +238,7 @@ POST /api/login     200</code></pre>
       </section>
 
       <section class="cta">
-        <div class="container cta-inner">
+        <div class="container cta-inner" data-reveal>
           <h2>Ready to build something small?</h2>
           <p>Create your account and start poking at the code.</p>
           <a class="btn btn-primary btn-lg" href="/signup.html">Sign up free</a>
@@ -191,8 +258,8 @@ POST /api/login     200</code></pre>
       </div>
     </footer>
 
-    <script>
-      document.getElementById('year').textContent = new Date().getFullYear();
-    </script>
+    <button class="to-top" type="button" data-back-to-top aria-label="Back to top">↑</button>
+
+    <script src="/ui.js"></script>
   </body>
 </html>

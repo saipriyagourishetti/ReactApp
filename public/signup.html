@@ -6,21 +6,48 @@
     <title>Create your account &mdash; DummyProject</title>
     <meta name="description" content="Create a free DummyProject account." />
     <link rel="stylesheet" href="/styles.css" />
+    <script>
+      (function () {
+        try {
+          var saved = localStorage.getItem('dp-theme');
+          var theme =
+            saved ||
+            (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+          document.documentElement.setAttribute('data-theme', theme);
+        } catch (e) {
+          document.documentElement.setAttribute('data-theme', 'dark');
+        }
+      })();
+    </script>
   </head>
   <body class="auth-body">
+    <a class="skip-link" href="#signup-form">Skip to the form</a>
+
     <header class="site-header">
       <nav class="nav container">
         <a class="brand" href="/">
           <span class="brand-mark">◆</span>
           <span>DummyProject</span>
         </a>
-        <a class="btn btn-ghost btn-sm" href="/">Back to home</a>
+        <div class="nav-actions">
+          <button
+            class="icon-btn theme-toggle"
+            type="button"
+            data-theme-toggle
+            aria-pressed="false"
+            aria-label="Switch theme"
+          >
+            <span data-theme-icon aria-hidden="true">☀</span>
+            <span data-theme-label>Light</span>
+          </button>
+          <a class="btn btn-ghost btn-sm" href="/">Back to home</a>
+        </div>
       </nav>
     </header>
 
     <main class="auth-main">
       <div class="container auth-grid">
-        <section class="auth-aside">
+        <section class="auth-aside" data-reveal>
           <h2>Join the demo</h2>
           <p>
             Accounts are stored in an in-memory <code>UserStore</code>. Restart the server and
@@ -34,7 +61,7 @@
           </ul>
         </section>
 
-        <section class="auth-card">
+        <section class="auth-card" data-reveal data-reveal-delay="120">
           <h1>Create your account</h1>
           <p class="auth-sub">Takes about 20 seconds.</p>
 
@@ -67,28 +94,58 @@
 
             <div class="field">
               <label for="password">Password</label>
-              <input
-                id="password"
-                name="password"
-                type="password"
-                autocomplete="new-password"
-                placeholder="At least 8 characters"
-                required
-              />
+              <span class="input-wrap">
+                <input
+                  id="password"
+                  name="password"
+                  type="password"
+                  autocomplete="new-password"
+                  placeholder="At least 8 characters"
+                  required
+                />
+                <button
+                  class="reveal-btn"
+                  type="button"
+                  data-password-toggle="password"
+                  aria-label="Show password"
+                >
+                  Show
+                </button>
+              </span>
+
+              <div class="strength" data-strength-for="password" data-level="empty">
+                <div class="strength-track" aria-hidden="true">
+                  <span></span><span></span><span></span><span></span>
+                </div>
+                <p class="strength-meta">
+                  <span data-strength-label>Enter a password</span>
+                </p>
+              </div>
+
               <p class="hint">Use 8+ characters with a mix of letters and numbers.</p>
               <p class="error" data-error-for="password"></p>
             </div>
 
             <div class="field">
               <label for="confirm">Confirm password</label>
-              <input
-                id="confirm"
-                name="confirm"
-                type="password"
-                autocomplete="new-password"
-                placeholder="Repeat your password"
-                required
-              />
+              <span class="input-wrap">
+                <input
+                  id="confirm"
+                  name="confirm"
+                  type="password"
+                  autocomplete="new-password"
+                  placeholder="Repeat your password"
+                  required
+                />
+                <button
+                  class="reveal-btn"
+                  type="button"
+                  data-password-toggle="confirm"
+                  aria-label="Show password"
+                >
+                  Show
+                </button>
+              </span>
               <p class="error" data-error-for="confirm"></p>
             </div>
 
@@ -119,6 +176,7 @@
       </div>
     </main>
 
+    <script src="/ui.js"></script>
     <script src="/app.js"></script>
   </body>
 </html>
