@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Log in &mdash; DummyProject</title>
+    <meta name="description" content="Log in to your DummyProject account." />
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body class="auth-body">
+    <header class="site-header">
+      <nav class="nav container">
+        <a class="brand" href="/">
+          <span class="brand-mark">◆</span>
+          <span>DummyProject</span>
+        </a>
+        <a class="btn btn-ghost btn-sm" href="/">Back to home</a>
+      </nav>
+    </header>
+
+    <main class="auth-main">
+      <div class="container auth-grid">
+        <section class="auth-aside">
+          <h2>Welcome back</h2>
+          <p>
+            Credentials are checked against an in-memory <code>UserStore</code> using salted
+            <code>scrypt</code> hashes. Restart the server and accounts reset.
+          </p>
+          <ul class="checklist">
+            <li>Salted scrypt password hashing</li>
+            <li>Constant-time hash comparison</li>
+            <li>Generic errors that avoid leaking emails</li>
+            <li>No tracking, no cookies</li>
+          </ul>
+
+          <div class="demo-hint">
+            <strong>Demo account</strong>
+            <p><code>ada@example.com</code> / <code>analytical1</code></p>
+          </div>
+        </section>
+
+        <section class="auth-card">
+          <h1>Log in</h1>
+          <p class="auth-sub">Use the account you created at signup.</p>
+
+          <form id="login-form" novalidate>
+            <div class="field">
+              <label for="email">Email address</label>
+              <input
+                id="email"
+                name="email"
+                type="email"
+                autocomplete="email"
+                placeholder="ada@example.com"
+                required
+              />
+              <p class="error" data-error-for="email"></p>
+            </div>
+
+            <div class="field">
+              <label for="password">Password</label>
+              <input
+                id="password"
+                name="password"
+                type="password"
+                autocomplete="current-password"
+                placeholder="Your password"
+                required
+              />
+              <p class="error" data-error-for="password"></p>
+            </div>
+
+            <button class="btn btn-primary btn-block" type="submit" id="login-btn">Log in</button>
+
+            <p class="form-status" id="login-status" role="status" aria-live="polite"></p>
+          </form>
+
+          <p class="auth-footer">
+            Don't have an account? <a href="/signup.html">Create one for free</a>
+          </p>
+        </section>
+      </div>
+    </main>
+
+    <script src="/app.js"></script>
+  </body>
+</html>

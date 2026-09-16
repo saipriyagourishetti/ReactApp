@@ -565,6 +565,32 @@ code {
   font-weight: 700;
 }
 
+.demo-hint {
+  margin-top: 26px;
+  padding: 14px 16px;
+  border: 1px dashed var(--border);
+  border-radius: var(--radius-sm);
+  background: rgba(108, 140, 255, 0.07);
+}
+
+.demo-hint strong {
+  display: block;
+  font-size: 0.82rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--accent-2);
+}
+
+.demo-hint p {
+  margin: 6px 0 0;
+}
+
+.nav-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
 .auth-card {
   background: var(--surface);
   border: 1px solid var(--border);

@@ -1,119 +1,215 @@
 'use strict';
 
 (function () {
-  const form = document.getElementById('signup-form');
-  if (!form) return;
-
-  const submitBtn = document.getElementById('submit-btn');
-  const status = document.getElementById('form-status');
-
   const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-  function setError(field, message) {
-    const holder = form.querySelector('[data-error-for="' + field + '"]');
-    if (holder) holder.textContent = message || '';
-    const input = form.elements[field];
-    if (input && input.classList) {
-      input.classList.toggle('invalid', Boolean(message));
-    }
-  }
-
-  function clearErrors() {
-    ['name', 'email', 'password', 'confirm', 'terms'].forEach((f) => setError(f, ''));
-    status.textContent = '';
-    status.className = 'form-status';
-  }
-
-  function validate(data) {
-    const errors = {};
-
-    if (!data.name || data.name.trim().length < 2) {
-      errors.name = 'Please enter your full name (at least 2 characters).';
-    }
-    if (!EMAIL_RE.test(data.email || '')) {
-      errors.email = 'Enter a valid email address, e.g. ada@example.com.';
-    }
-    if (!data.password || data.password.length < 8) {
-      errors.password = 'Password must be at least 8 characters long.';
-    } else if (!/[a-zA-Z]/.test(data.password) || !/\d/.test(data.password)) {
-      errors.password = 'Include at least one letter and one number.';
-    }
-    if (data.password !== data.confirm) {
-      errors.confirm = 'Passwords do not match.';
-    }
-    if (!data.terms) {
-      errors.terms = 'You must accept the terms to continue.';
+  /**
+   * Shared helpers for a form that uses [data-error-for] holders
+   * and a .form-status element.
+   */
+  function createFormHelpers(form, status) {
+    function setError(field, message) {
+      const holder = form.querySelector('[data-error-for="' + field + '"]');
+      if (holder) holder.textContent = message || '';
+      const input = form.elements[field];
+      if (input && input.classList) {
+        input.classList.toggle('invalid', Boolean(message));
+      }
     }
 
-    return errors;
-  }
+    function clearErrors(fields) {
+      fields.forEach((f) => setError(f, ''));
+      status.textContent = '';
+      status.className = 'form-status';
+    }
 
-  function showStatus(message, kind) {
-    status.textContent = message;
-    status.className = 'form-status' + (kind ? ' ' + kind : '');
-  }
+    function showStatus(message, kind) {
+      status.textContent = message;
+      status.className = 'form-status' + (kind ? ' ' + kind : '');
+    }
 
-  form.addEventListener('submit', async function (event) {
-    event.preventDefault();
-    clearErrors();
-
-    const data = {
-      name: form.elements.name.value,
-      email: form.elements.email.value,
-      password: form.elements.password.value,
-      confirm: form.elements.confirm.value,
-      role: form.elements.role.value,
-      terms: form.elements.terms.checked,
-    };
-
-    const errors = validate(data);
-    const firstError = Object.keys(errors)[0];
-
-    if (firstError) {
+    function applyErrors(errors) {
       Object.keys(errors).forEach((field) => setError(field, errors[field]));
-      const focusTarget = form.elements[firstError];
-      if (focusTarget && focusTarget.focus) focusTarget.focus();
-      showStatus('Please fix the highlighted fields.', 'failure');
-      return;
+      const first = Object.keys(errors)[0];
+      if (first) {
+        const target = form.elements[first];
+        if (target && target.focus) target.focus();
+      }
+      return Boolean(first);
     }
 
-    submitBtn.disabled = true;
-    submitBtn.textContent = 'Creating account…';
+    // Clear a field's error as soon as the user edits it.
+    form.addEventListener('input', function (event) {
+      const name = event.target.name;
+      if (name) setError(name, '');
+    });
 
-    try {
-      const response = await fetch('/api/signup', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          name: data.name.trim(),
-          email: data.email.trim(),
-          role: data.role,
-        }),
-      });
+    return { setError, clearErrors, showStatus, applyErrors };
+  }
 
-      const payload = await response.json().catch(() => ({}));
+  async function postJson(url, body) {
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+    });
+    const payload = await response.json().catch(() => ({}));
+    return { response, payload };
+  }
 
-      if (!response.ok) {
-        if (payload.field) setError(payload.field, payload.error);
-        showStatus(payload.error || 'Signup failed. Please try again.', 'failure');
+  /* ---------------- Signup ---------------- */
+
+  function initSignup() {
+    const form = document.getElementById('signup-form');
+    if (!form) return;
+
+    const submitBtn = document.getElementById('submit-btn');
+    const status = document.getElementById('form-status');
+    const fields = ['name', 'email', 'password', 'confirm', 'terms'];
+    const ui = createFormHelpers(form, status);
+
+    function validate(data) {
+      const errors = {};
+
+      if (!data.name || data.name.trim().length < 2) {
+        errors.name = 'Please enter your full name (at least 2 characters).';
+      }
+      if (!EMAIL_RE.test(data.email || '')) {
+        errors.email = 'Enter a valid email address, e.g. ada@example.com.';
+      }
+      if (!data.password || data.password.length < 8) {
+        errors.password = 'Password must be at least 8 characters long.';
+      } else if (!/[a-zA-Z]/.test(data.password) || !/\d/.test(data.password)) {
+        errors.password = 'Include at least one letter and one number.';
+      }
+      if (data.password !== data.confirm) {
+        errors.confirm = 'Passwords do not match.';
+      }
+      if (!data.terms) {
+        errors.terms = 'You must accept the terms to continue.';
+      }
+
+      return errors;
+    }
+
+    form.addEventListener('submit', async function (event) {
+      event.preventDefault();
+      ui.clearErrors(fields);
+
+      const data = {
+        name: form.elements.name.value,
+        email: form.elements.email.value,
+        password: form.elements.password.value,
+        confirm: form.elements.confirm.value,
+        role: form.elements.role.value,
+        terms: form.elements.terms.checked,
+      };
+
+      if (ui.applyErrors(validate(data))) {
+        ui.showStatus('Please fix the highlighted fields.', 'failure');
         return;
       }
 
-      form.reset();
-      showStatus(
-        'Welcome, ' + payload.user.name + '! Your account (#' + payload.user.id + ') is ready.',
-        'success'
-      );
-    } catch (err) {
-      showStatus('Network error — is the server running? (npm start)', 'failure');
-    } finally {
-      submitBtn.disabled = false;
-      submitBtn.textContent = 'Create account';
-    }
-  });
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Creating account…';
 
-  form.addEventListener('input', function (event) {
-    const name = event.target.name;
-    if (name) setError(name, '');
-  });
+      try {
+        const { response, payload } = await postJson('/api/signup', {
+          name: data.name.trim(),
+          email: data.email.trim(),
+          password: data.password,
+          role: data.role,
+        });
+
+        if (!response.ok) {
+          if (payload.field) ui.setError(payload.field, payload.error);
+          ui.showStatus(payload.error || 'Signup failed. Please try again.', 'failure');
+          return;
+        }
+
+        form.reset();
+        ui.showStatus(
+          'Welcome, ' +
+            payload.user.name +
+            '! Your account (#' +
+            payload.user.id +
+            ') is ready. You can now log in.',
+          'success'
+        );
+      } catch (err) {
+        ui.showStatus('Network error — is the server running? (npm start)', 'failure');
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Create account';
+      }
+    });
+  }
+
+  /* ---------------- Login ---------------- */
+
+  function initLogin() {
+    const form = document.getElementById('login-form');
+    if (!form) return;
+
+    const submitBtn = document.getElementById('login-btn');
+    const status = document.getElementById('login-status');
+    const fields = ['email', 'password'];
+    const ui = createFormHelpers(form, status);
+
+    function validate(data) {
+      const errors = {};
+      if (!EMAIL_RE.test(data.email || '')) {
+        errors.email = 'Enter a valid email address.';
+      }
+      if (!data.password) {
+        errors.password = 'Please enter your password.';
+      }
+      return errors;
+    }
+
+    form.addEventListener('submit', async function (event) {
+      event.preventDefault();
+      ui.clearErrors(fields);
+
+      const data = {
+        email: form.elements.email.value,
+        password: form.elements.password.value,
+      };
+
+      if (ui.applyErrors(validate(data))) {
+        ui.showStatus('Please fix the highlighted fields.', 'failure');
+        return;
+      }
+
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Logging in…';
+
+      try {
+        const { response, payload } = await postJson('/api/login', {
+          email: data.email.trim(),
+          password: data.password,
+        });
+
+        if (!response.ok) {
+          if (payload.field) ui.setError(payload.field, payload.error);
+          ui.showStatus(payload.error || 'Login failed. Please try again.', 'failure');
+          return;
+        }
+
+        form.reset();
+        ui.showStatus(
+          'Logged in as ' + payload.user.name + ' (' + payload.user.role + ').',
+          'success'
+        );
+      } catch (err) {
+        ui.showStatus('Network error — is the server running? (npm start)', 'failure');
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Log in';
+      }
+    });
+  }
+
+  initSignup();
+  initLogin();
 })();

@@ -3,7 +3,7 @@
 const http = require('http');
 const fs = require('fs');
 const path = require('path');
-const { UserStore } = require('./userStore');
+const { UserStore, validatePassword } = require('./userStore');
 
 const PUBLIC_DIR = path.join(__dirname, '..', 'public');
 const DEFAULT_PORT = Number(process.env.PORT) || 3000;
@@ -21,7 +21,7 @@ const MIME_TYPES = {
 };
 
 const store = new UserStore([
-  { name: 'Ada Lovelace', email: 'ada@example.com', role: 'admin' },
+  { name: 'Ada Lovelace', email: 'ada@example.com', role: 'admin', password: 'analytical1' },
 ]);
 
 function sendJson(res, statusCode, body) {
@@ -83,6 +83,7 @@ async function handleSignup(req, res) {
 
   const name = typeof data.name === 'string' ? data.name.trim() : '';
   const email = typeof data.email === 'string' ? data.email.trim() : '';
+  const password = typeof data.password === 'string' ? data.password : '';
   const role = ['user', 'editor', 'admin'].includes(data.role) ? data.role : 'user';
 
   if (name.length < 2) {
@@ -93,17 +94,57 @@ async function handleSignup(req, res) {
     sendJson(res, 400, { error: 'Please provide a valid email address.', field: 'email' });
     return;
   }
+
+  const passwordProblem = validatePassword(password);
+  if (passwordProblem) {
+    sendJson(res, 400, { error: passwordProblem, field: 'password' });
+    return;
+  }
+
   if (store.findByEmail(email)) {
     sendJson(res, 409, { error: 'An account with this email already exists.', field: 'email' });
     return;
   }
 
   try {
-    const user = store.create({ name, email, role });
+    const user = store.create({ name, email, role, password });
     sendJson(res, 201, { user });
   } catch (err) {
     sendJson(res, 400, { error: err.message });
   }
+}
+
+async function handleLogin(req, res) {
+  let data;
+  try {
+    const raw = await readBody(req);
+    data = JSON.parse(raw || '{}');
+  } catch (err) {
+    sendJson(res, 400, { error: 'Invalid JSON payload.' });
+    return;
+  }
+
+  const email = typeof data.email === 'string' ? data.email.trim() : '';
+  const password = typeof data.password === 'string' ? data.password : '';
+
+  if (!email) {
+    sendJson(res, 400, { error: 'Please enter your email address.', field: 'email' });
+    return;
+  }
+  if (!password) {
+    sendJson(res, 400, { error: 'Please enter your password.', field: 'password' });
+    return;
+  }
+
+  const user = store.verifyCredentials(email, password);
+
+  // Deliberately generic: do not reveal whether the email exists.
+  if (!user) {
+    sendJson(res, 401, { error: 'Incorrect email or password.' });
+    return;
+  }
+
+  sendJson(res, 200, { user });
 }
 
 function createServer() {
@@ -117,6 +158,16 @@ function createServer() {
         return;
       }
       handleSignup(req, res);
+      return;
+    }
+
+    if (pathname === '/api/login') {
+      if (req.method !== 'POST') {
+        res.setHeader('Allow', 'POST');
+        sendJson(res, 405, { error: 'Method not allowed. Use POST.' });
+        return;
+      }
+      handleLogin(req, res);
       return;
     }
 
@@ -141,7 +192,9 @@ function start(port = DEFAULT_PORT) {
     console.log('=== Dummy Project Web ===');
     console.log(`Landing page : http://localhost:${port}/`);
     console.log(`Signup page  : http://localhost:${port}/signup.html`);
+    console.log(`Login page   : http://localhost:${port}/login.html`);
     console.log(`Users API    : http://localhost:${port}/api/users`);
+    console.log('\nDemo account : ada@example.com / analytical1');
     console.log('\nPress Ctrl+C to stop.');
   });
   return server;

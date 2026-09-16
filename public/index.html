@@ -22,7 +22,10 @@
           <li><a href="#how-it-works">How it works</a></li>
           <li><a href="#pricing">Pricing</a></li>
         </ul>
-        <a class="btn btn-primary btn-sm" href="/signup.html">Get started</a>
+        <div class="nav-actions">
+          <a class="btn btn-ghost btn-sm" href="/login.html">Log in</a>
+          <a class="btn btn-primary btn-sm" href="/signup.html">Get started</a>
+        </div>
       </nav>
     </header>
 
@@ -38,7 +41,7 @@
             </p>
             <div class="hero-actions">
               <a class="btn btn-primary" href="/signup.html">Create free account</a>
-              <a class="btn btn-ghost" href="#features">See what's inside</a>
+              <a class="btn btn-ghost" href="/login.html">Log in</a>
             </div>
             <ul class="hero-badges">
               <li>✓ No credit card</li>
@@ -57,7 +60,9 @@
 
 GET  /              200
 GET  /signup.html   200
-POST /api/signup    201</code></pre>
+GET  /login.html    200
+POST /api/signup    201
+POST /api/login     200</code></pre>
             </div>
           </div>
         </div>
@@ -179,6 +184,7 @@ POST /api/signup    201</code></pre>
         <p>&copy; <span id="year">2025</span> DummyProject &middot; MIT licensed</p>
         <ul class="footer-links">
           <li><a href="/signup.html">Sign up</a></li>
+          <li><a href="/login.html">Log in</a></li>
           <li><a href="#features">Features</a></li>
           <li><a href="#pricing">Pricing</a></li>
         </ul>
