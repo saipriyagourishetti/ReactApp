@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Dashboard &mdash; DummyProject</title>
+    <meta name="description" content="Your DummyProject dashboard — stats, activity, and quick actions." />
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <div class="sidebar-layout">
+      <!-- Sidebar -->
+      <aside class="sidebar">
+        <a class="sidebar-brand" href="/">
+          <span class="brand-mark">◆</span>
+          <span>DummyProject</span>
+        </a>
+
+        <ul class="sidebar-nav">
+          <li>
+            <a href="/dashboard.html" class="active">
+              <span class="sidebar-icon">▦</span>
+              <span>Dashboard</span>
+            </a>
+          </li>
+          <li>
+            <a href="/profile.html">
+              <span class="sidebar-icon">◎</span>
+              <span>Profile</span>
+            </a>
+          </li>
+          <li>
+            <a href="/about.html">
+              <span class="sidebar-icon">◈</span>
+              <span>About</span>
+            </a>
+          </li>
+          <li>
+            <a href="/#features">
+              <span class="sidebar-icon">⚡</span>
+              <span>Features</span>
+            </a>
+          </li>
+          <li>
+            <a href="/#pricing">
+              <span class="sidebar-icon">◇</span>
+              <span>Pricing</span>
+            </a>
+          </li>
+          <li>
+            <a href="/signup.html">
+              <span class="sidebar-icon">+</span>
+              <span>Sign up</span>
+            </a>
+          </li>
+          <li>
+            <a href="/login.html">
+              <span class="sidebar-icon">→</span>
+              <span>Log in</span>
+            </a>
+          </li>
+        </ul>
+
+        <div class="sidebar-footer">
+          <p>&copy; <span class="year">2025</span> DummyProject</p>
+          <p>MIT licensed</p>
+        </div>
+      </aside>
+
+      <!-- Main content -->
+      <div class="dashboard-main">
+        <!-- Page header -->
+        <header class="site-header" style="position:relative; margin: -36px -40px 32px; border-radius: 0;">
+          <nav class="nav container" style="max-width:100%; padding: 0 40px;">
+            <div style="display:flex; align-items:center; gap:14px;">
+              <div class="avatar-sm" aria-hidden="true">AL</div>
+              <div>
+                <div style="font-weight:600; font-size:0.95rem;">Ada Lovelace</div>
+                <div style="font-size:0.8rem; color:var(--muted);">Administrator</div>
+              </div>
+            </div>
+            <ul class="nav-links">
+              <li><a href="/about.html">About</a></li>
+              <li><a href="/#features">Features</a></li>
+              <li><a href="/#pricing">Pricing</a></li>
+            </ul>
+            <div class="nav-actions">
+              <button class="hamburger" aria-label="Toggle navigation" aria-expanded="false">
+                <span></span><span></span><span></span>
+              </button>
+              <a class="btn btn-ghost btn-sm" href="/profile.html">My Profile</a>
+              <a class="btn btn-primary btn-sm" href="/signup.html">Invite</a>
+            </div>
+          </nav>
+        </header>
+
+        <!-- Welcome -->
+        <div style="margin-bottom: 28px;">
+          <p class="eyebrow" style="display:inline-block; margin-bottom: 8px;">Overview</p>
+          <h1 style="margin:0 0 6px; font-size: clamp(1.5rem, 3vw, 2rem);">
+            Good morning, <span class="accent">Ada</span> 👋
+          </h1>
+          <p style="color:var(--muted); margin:0;">Here's what's happening with your project today.</p>
+        </div>
+
+        <!-- Stat cards -->
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-label">Total Users</div>
+            <div class="stat-num accent">1,248</div>
+            <span class="stat-trend up">▲ 12% this week</span>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Active Sessions</div>
+            <div class="stat-num" style="color:var(--accent-2);">342</div>
+            <span class="stat-trend up">▲ 5% today</span>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Uptime</div>
+            <div class="stat-num" style="color:var(--success);">99.8%</div>
+            <span class="stat-trend neutral">— stable</span>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Avg Response</div>
+            <div class="stat-num" style="color:var(--accent-3);">48ms</div>
+            <span class="stat-trend up">▲ faster by 3ms</span>
+          </div>
+        </div>
+
+        <!-- Two-column lower section -->
+        <div class="dashboard-panels">
+
+          <!-- Recent activity -->
+          <div class="panel">
+            <div class="panel-header">
+              <h2 class="panel-title">Recent Activity</h2>
+              <span class="badge badge-accent">Live</span>
+            </div>
+            <ul class="activity-feed">
+              <li class="activity-item">
+                <span class="activity-dot green"></span>
+                <div class="activity-body">
+                  <p class="activity-text"><strong>grace@example.com</strong> signed up as <em>editor</em></p>
+                  <span class="activity-time">2 minutes ago</span>
+                </div>
+              </li>
+              <li class="activity-item">
+                <span class="activity-dot blue"></span>
+                <div class="activity-body">
+                  <p class="activity-text"><strong>POST /api/login</strong> responded 200 in 31ms</p>
+                  <span class="activity-time">5 minutes ago</span>
+                </div>
+              </li>
+              <li class="activity-item">
+                <span class="activity-dot amber"></span>
+                <div class="activity-body">
+                  <p class="activity-text">Server restarted — in-memory store reset</p>
+                  <span class="activity-time">18 minutes ago</span>
+                </div>
+              </li>
+              <li class="activity-item">
+                <span class="activity-dot green"></span>
+                <div class="activity-body">
+                  <p class="activity-text"><strong>alan@example.com</strong> signed up as <em>user</em></p>
+                  <span class="activity-time">34 minutes ago</span>
+                </div>
+              </li>
+              <li class="activity-item">
+                <span class="activity-dot blue"></span>
+                <div class="activity-body">
+                  <p class="activity-text"><strong>GET /</strong> — 847 requests served today</p>
+                  <span class="activity-time">1 hour ago</span>
+                </div>
+              </li>
+              <li class="activity-item">
+                <span class="activity-dot red"></span>
+                <div class="activity-body">
+                  <p class="activity-text"><strong>POST /api/signup</strong> — duplicate email rejected</p>
+                  <span class="activity-time">2 hours ago</span>
+                </div>
+              </li>
+            </ul>
+          </div>
+
+          <!-- Right column -->
+          <div>
+            <!-- Quick actions -->
+            <div class="panel" style="margin-bottom:22px;">
+              <div class="panel-header">
+                <h2 class="panel-title">Quick Actions</h2>
+              </div>
+              <div class="quick-actions" style="flex-direction:column;">
+                <a class="btn btn-primary" href="/signup.html" style="justify-content:flex-start;">
+                  <span>+</span> Create Account
+                </a>
+                <a class="btn btn-ghost" href="/login.html" style="justify-content:flex-start;">
+                  <span>→</span> Test Login
+                </a>
+                <a class="btn btn-ghost" href="/profile.html" style="justify-content:flex-start;">
+                  <span>◎</span> Edit Profile
+                </a>
+              </div>
+            </div>
+
+            <!-- System info -->
+            <div class="panel">
+              <div class="panel-header">
+                <h2 class="panel-title">System Info</h2>
+                <span class="badge badge-success">Healthy</span>
+              </div>
+              <div style="display:flex; flex-direction:column; gap:10px; font-size:0.9rem;">
+                <div style="display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px solid var(--border);">
+                  <span style="color:var(--muted);">Runtime</span>
+                  <code>Node 18+</code>
+                </div>
+                <div style="display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px solid var(--border);">
+                  <span style="color:var(--muted);">Store type</span>
+                  <code>In-memory</code>
+                </div>
+                <div style="display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px solid var(--border);">
+                  <span style="color:var(--muted);">Auth method</span>
+                  <code>scrypt</code>
+                </div>
+                <div style="display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px solid var(--border);">
+                  <span style="color:var(--muted);">Dependencies</span>
+                  <span style="color:var(--success);">Zero</span>
+                </div>
+                <div style="display:flex; justify-content:space-between; padding:8px 0;">
+                  <span style="color:var(--muted);">Port</span>
+                  <code>:3000</code>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="site-footer" style="margin: 32px -40px -36px; border-radius: 0;">
+          <div class="footer-inner" style="padding: 0 40px;">
+            <p>&copy; <span class="year">2025</span> DummyProject &middot; MIT licensed</p>
+            <ul class="footer-links">
+              <li><a href="/">Home</a></li>
+              <li><a href="/about.html">About</a></li>
+              <li><a href="/profile.html">Profile</a></li>
+              <li><a href="/signup.html">Sign up</a></li>
+            </ul>
+          </div>
+        </footer>
+      </div>
+    </div>
+
+    <script src="/app.js"></script>
+  </body>
+</html>
