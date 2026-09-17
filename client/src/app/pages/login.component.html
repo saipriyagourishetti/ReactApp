@@ -1,0 +1,91 @@
+<a class="skip-link" href="#login-form">Skip to the form</a>
+
+<app-site-header [showLogin]="false" signupLabel="Sign up" />
+
+<main class="auth-main" id="main">
+  <div class="container auth-grid">
+    <section class="auth-aside" appReveal>
+      <h2>Welcome back</h2>
+      <p>
+        Credentials are checked against an in-memory <code>UserStore</code> using salted
+        <code>scrypt</code> hashes. Restart the server and accounts reset.
+      </p>
+      <ul class="checklist">
+        <li>Salted scrypt password hashing</li>
+        <li>Constant-time hash comparison</li>
+        <li>Generic errors that avoid leaking emails</li>
+        <li>No tracking, no cookies</li>
+      </ul>
+
+      <div class="demo-hint">
+        <strong>Demo account</strong>
+        <p>
+          <code>{{ demoEmail }}</code> /
+          <code>{{ demoPassword }}</code>
+        </p>
+        <button class="copy-btn" type="button" (click)="copyEmail()">Copy email</button>
+        <button class="btn btn-ghost btn-sm" type="button" (click)="fillDemo()">
+          Fill the form
+        </button>
+      </div>
+    </section>
+
+    <section class="auth-card" [appReveal]="120">
+      <h1>Log in</h1>
+      <p class="auth-sub">Use the account you created at signup.</p>
+
+      <form id="login-form" [formGroup]="form" (ngSubmit)="submit()" novalidate>
+        <div class="field">
+          <label for="email">Email address</label>
+          <input
+            id="email"
+            type="email"
+            formControlName="email"
+            autocomplete="email"
+            placeholder="ada@example.com"
+            [class.invalid]="showError('email')"
+          />
+          <p class="error">{{ errorFor('email') }}</p>
+        </div>
+
+        <div class="field">
+          <label for="password">Password</label>
+          <span class="input-wrap">
+            <input
+              id="password"
+              [type]="showPassword() ? 'text' : 'password'"
+              formControlName="password"
+              autocomplete="current-password"
+              placeholder="Your password"
+              [class.invalid]="showError('password')"
+            />
+            <button
+              class="reveal-btn"
+              type="button"
+              [attr.aria-pressed]="showPassword()"
+              [attr.aria-label]="(showPassword() ? 'Hide' : 'Show') + ' password'"
+              (click)="togglePassword()"
+            >
+              {{ showPassword() ? 'Hide' : 'Show' }}
+            </button>
+          </span>
+          <p class="error">{{ errorFor('password') }}</p>
+        </div>
+
+        <button class="btn btn-primary btn-block" type="submit" [disabled]="submitting()">
+          {{ submitting() ? 'Logging in…' : 'Log in' }}
+        </button>
+
+        <p class="form-status" [class]="'form-status ' + status().kind" role="status" aria-live="polite">
+          {{ status().message }}
+        </p>
+      </form>
+
+      <p class="auth-footer">
+        Don't have an account? <a routerLink="/signup">Create one for free</a> &middot;
+        <a routerLink="/about">About</a> &middot;
+        <a routerLink="/dashboard">Dashboard</a>
+      </p>
+    </section>
+  </div>
+</main>

@@ -1,0 +1,142 @@
+<a class="skip-link" href="#signup-form">Skip to the form</a>
+
+<app-site-header [showSignup]="false" />
+
+<main class="auth-main" id="main">
+  <div class="container auth-grid">
+    <section class="auth-aside" appReveal>
+      <h2>Join the demo</h2>
+      <p>
+        Accounts are stored in an in-memory <code>UserStore</code>. Restart the server and they're
+        gone &mdash; perfect for experimenting.
+      </p>
+      <ul class="checklist">
+        <li>Instant account creation</li>
+        <li>Email uniqueness validation</li>
+        <li>Role selection (user, editor, admin)</li>
+        <li>No tracking, no cookies</li>
+      </ul>
+    </section>
+
+    <section class="auth-card" [appReveal]="120">
+      <h1>Create your account</h1>
+      <p class="auth-sub">Takes about 20 seconds.</p>
+
+      <form id="signup-form" [formGroup]="form" (ngSubmit)="submit()" novalidate>
+        <div class="field">
+          <label for="name">Full name</label>
+          <input
+            id="name"
+            type="text"
+            formControlName="name"
+            autocomplete="name"
+            placeholder="Ada Lovelace"
+            [class.invalid]="showError('name')"
+          />
+          <p class="error">{{ errorFor('name') }}</p>
+        </div>
+
+        <div class="field">
+          <label for="email">Email address</label>
+          <input
+            id="email"
+            type="email"
+            formControlName="email"
+            autocomplete="email"
+            placeholder="ada@example.com"
+            [class.invalid]="showError('email')"
+          />
+          <p class="error">{{ control('email').errors?.['server'] || errorFor('email') }}</p>
+        </div>
+
+        <div class="field">
+          <label for="password">Password</label>
+          <span class="input-wrap">
+            <input
+              id="password"
+              [type]="showPassword() ? 'text' : 'password'"
+              formControlName="password"
+              autocomplete="new-password"
+              placeholder="At least 8 characters"
+              [class.invalid]="showError('password')"
+            />
+            <button
+              class="reveal-btn"
+              type="button"
+              [attr.aria-pressed]="showPassword()"
+              [attr.aria-label]="(showPassword() ? 'Hide' : 'Show') + ' password'"
+              (click)="togglePassword()"
+            >
+              {{ showPassword() ? 'Hide' : 'Show' }}
+            </button>
+          </span>
+
+          <div class="strength" [attr.data-level]="strength().level">
+            <div class="strength-track" aria-hidden="true">
+              <span></span><span></span><span></span><span></span>
+            </div>
+            <p class="strength-meta">
+              <span>{{ strength().label }}</span>
+            </p>
+          </div>
+
+          <p class="hint">Use 8+ characters with a mix of letters and numbers.</p>
+          <p class="error">{{ errorFor('password') }}</p>
+        </div>
+
+        <div class="field">
+          <label for="confirm">Confirm password</label>
+          <span class="input-wrap">
+            <input
+              id="confirm"
+              [type]="showConfirm() ? 'text' : 'password'"
+              formControlName="confirm"
+              autocomplete="new-password"
+              placeholder="Repeat your password"
+              [class.invalid]="showError('confirm')"
+            />
+            <button
+              class="reveal-btn"
+              type="button"
+              [attr.aria-pressed]="showConfirm()"
+              [attr.aria-label]="(showConfirm() ? 'Hide' : 'Show') + ' password'"
+              (click)="toggleConfirm()"
+            >
+              {{ showConfirm() ? 'Hide' : 'Show' }}
+            </button>
+          </span>
+          <p class="error">{{ errorFor('confirm') }}</p>
+        </div>
+
+        <div class="field">
+          <label for="role">Role</label>
+          <select id="role" formControlName="role">
+            <option value="user">User</option>
+            <option value="editor">Editor</option>
+            <option value="admin">Admin</option>
+          </select>
+        </div>
+
+        <label class="checkbox">
+          <input id="terms" type="checkbox" formControlName="terms" />
+          <span>I agree to the terms of service and privacy policy.</span>
+        </label>
+        <p class="error">{{ errorFor('terms') }}</p>
+
+        <button class="btn btn-primary btn-block" type="submit" [disabled]="submitting()">
+          {{ submitting() ? 'Creating account…' : 'Create account' }}
+        </button>
+
+        <p class="form-status" [class]="'form-status ' + status().kind" role="status" aria-live="polite">
+          {{ status().message }}
+        </p>
+      </form>
+
+      <p class="auth-footer">
+        Already have an account? <a routerLink="/login">Log in instead</a> &middot;
+        <a routerLink="/about">About</a> &middot;
+        <a routerLink="/dashboard">Dashboard</a>
+      </p>
+    </section>
+  </div>
+</main>

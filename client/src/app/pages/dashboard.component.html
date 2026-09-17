@@ -1,0 +1,167 @@
+<div class="sidebar-layout">
+  <aside class="sidebar">
+    <a class="sidebar-brand" routerLink="/">
+      <span class="brand-mark">◆</span>
+      <span>ValueLabs Aide Autonomy</span>
+    </a>
+
+    <ul class="sidebar-nav">
+      <li>
+        <a routerLink="/dashboard" routerLinkActive="active">
+          <span class="sidebar-icon">▦</span><span>Dashboard</span>
+        </a>
+      </li>
+      <li>
+        <a routerLink="/profile" routerLinkActive="active">
+          <span class="sidebar-icon">◎</span><span>Profile</span>
+        </a>
+      </li>
+      <li>
+        <a routerLink="/about" routerLinkActive="active">
+          <span class="sidebar-icon">◈</span><span>About</span>
+        </a>
+      </li>
+      <li>
+        <a routerLink="/" fragment="features">
+          <span class="sidebar-icon">⚡</span><span>Features</span>
+        </a>
+      </li>
+      <li>
+        <a routerLink="/" fragment="pricing">
+          <span class="sidebar-icon">◇</span><span>Pricing</span>
+        </a>
+      </li>
+      <li>
+        <a routerLink="/signup" routerLinkActive="active">
+          <span class="sidebar-icon">+</span><span>Sign up</span>
+        </a>
+      </li>
+      <li>
+        <a routerLink="/login" routerLinkActive="active">
+          <span class="sidebar-icon">→</span><span>Log in</span>
+        </a>
+      </li>
+    </ul>
+
+    <div class="sidebar-footer">
+      <p>&copy; {{ year }} ValueLabs Aide Autonomy</p>
+      <p>MIT licensed</p>
+    </div>
+  </aside>
+
+  <div class="dashboard-main" id="main">
+    <header class="site-header" style="position: relative; margin: -36px -40px 32px; border-radius: 0">
+      <nav class="nav container" style="max-width: 100%; padding: 0 40px">
+        <div style="display: flex; align-items: center; gap: 14px">
+          <div class="avatar-sm" aria-hidden="true">AL</div>
+          <div>
+            <div style="font-weight: 600; font-size: 0.95rem">Ada Lovelace</div>
+            <div style="font-size: 0.8rem; color: var(--muted)">Administrator</div>
+          </div>
+        </div>
+        <ul class="nav-links">
+          <li><a routerLink="/about">About</a></li>
+          <li><a routerLink="/" fragment="features">Features</a></li>
+          <li><a routerLink="/" fragment="pricing">Pricing</a></li>
+        </ul>
+        <div class="nav-actions">
+          <a class="btn btn-ghost btn-sm" routerLink="/profile">My Profile</a>
+          <a class="btn btn-primary btn-sm" routerLink="/signup">Invite</a>
+        </div>
+      </nav>
+    </header>
+
+    <div style="margin-bottom: 28px">
+      <p class="eyebrow" style="display: inline-block; margin-bottom: 8px">Overview</p>
+      <h1 style="margin: 0 0 6px; font-size: clamp(1.5rem, 3vw, 2rem)">
+        Good morning, <span class="accent">Ada</span> 👋
+      </h1>
+      <p style="color: var(--muted); margin: 0">
+        Here's what's happening with your project today.
+      </p>
+    </div>
+
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-label">Total Users</div>
+        <div class="stat-num accent">{{ userCount() }}</div>
+        <span class="stat-trend up">live from /api/users</span>
+      </div>
+      @for (card of cards; track card.label) {
+        <div class="stat-card">
+          <div class="stat-label">{{ card.label }}</div>
+          <div class="stat-num" [style.color]="card.color">{{ card.value }}</div>
+          <span class="stat-trend" [class]="'stat-trend ' + card.trendKind">{{ card.trend }}</span>
+        </div>
+      }
+    </div>
+
+    <div class="dashboard-panels">
+      <div class="panel">
+        <div class="panel-header">
+          <h2 class="panel-title">Recent Activity</h2>
+          <span class="badge badge-accent">Live</span>
+        </div>
+        <ul class="activity-feed">
+          @for (item of activity; track item.text) {
+            <li class="activity-item">
+              <span class="activity-dot" [class]="'activity-dot ' + item.dot"></span>
+              <div class="activity-body">
+                <p class="activity-text">{{ item.text }}</p>
+                <span class="activity-time">{{ item.time }}</span>
+              </div>
+            </li>
+          }
+        </ul>
+      </div>
+
+      <div>
+        <div class="panel" style="margin-bottom: 22px">
+          <div class="panel-header">
+            <h2 class="panel-title">Quick Actions</h2>
+          </div>
+          <div class="quick-actions" style="flex-direction: column">
+            <a class="btn btn-primary" routerLink="/signup" style="justify-content: flex-start">
+              <span>+</span> Create Account
+            </a>
+            <a class="btn btn-ghost" routerLink="/login" style="justify-content: flex-start">
+              <span>→</span> Test Login
+            </a>
+            <a class="btn btn-ghost" routerLink="/profile" style="justify-content: flex-start">
+              <span>◎</span> Edit Profile
+            </a>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-header">
+            <h2 class="panel-title">System Info</h2>
+            <span class="badge badge-success">Healthy</span>
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 10px; font-size: 0.9rem">
+            @for (row of systemInfo; track row.label) {
+              <div
+                style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid var(--border)"
+              >
+                <span style="color: var(--muted)">{{ row.label }}</span>
+                <code>{{ row.value }}</code>
+              </div>
+            }
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <footer class="site-footer" style="margin: 32px -40px -36px; border-radius: 0">
+      <div class="footer-inner" style="padding: 0 40px">
+        <p>&copy; {{ year }} ValueLabs Aide Autonomy &middot; MIT licensed</p>
+        <ul class="footer-links">
+          <li><a routerLink="/">Home</a></li>
+          <li><a routerLink="/about">About</a></li>
+          <li><a routerLink="/profile">Profile</a></li>
+          <li><a routerLink="/signup">Sign up</a></li>
+        </ul>
+      </div>
+    </footer>
+  </div>
+</div>

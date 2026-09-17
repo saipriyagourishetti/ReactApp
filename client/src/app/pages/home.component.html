@@ -1,0 +1,132 @@
+<app-site-header />
+
+<main id="main">
+  <section class="hero">
+    <div class="container hero-grid">
+      <div class="hero-copy" appReveal>
+        <p class="eyebrow">Zero dependencies &middot; Node 18+</p>
+        <h1>Ship your side project <span class="accent">before the weekend ends</span></h1>
+        <p class="lead">
+          A tiny starter with a calculator module, an in-memory user store, and a ready-to-use
+          signup flow — now with an Angular front end and a dependency-free Node API.
+        </p>
+        <div class="hero-actions">
+          <a class="btn btn-primary" routerLink="/signup">Create free account</a>
+          <a class="btn btn-ghost" routerLink="/login">Log in</a>
+        </div>
+        <ul class="hero-badges">
+          <li>✓ No credit card</li>
+          <li>✓ Runs offline</li>
+          <li>✓ MIT licensed</li>
+        </ul>
+      </div>
+
+      <div class="hero-visual" [appReveal]="140">
+        <div class="code-card">
+          <div class="code-head">
+            <div class="code-dots" aria-hidden="true">
+              <span></span><span></span><span></span>
+            </div>
+            <button
+              class="copy-btn"
+              type="button"
+              [class.is-copied]="copied()"
+              (click)="copySnippet()"
+            >
+              {{ copied() ? 'Copied' : 'Copy' }}
+            </button>
+          </div>
+          <pre><code>{{ snippet }}</code></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="container">
+      <ul class="stats" appReveal>
+        @for (stat of stats; track stat.label) {
+          <li class="stat">
+            <span class="stat-value" [appCountUp]="stat.to" [suffix]="stat.suffix">
+              0{{ stat.suffix }}
+            </span>
+            <span class="stat-label">{{ stat.label }}</span>
+          </li>
+        }
+      </ul>
+    </div>
+  </section>
+
+  <section class="section" id="features">
+    <div class="container">
+      <h2 class="section-title" appReveal>Everything you need, nothing you don't</h2>
+      <p class="section-sub" appReveal>
+        Small, readable modules you can delete or extend in minutes.
+      </p>
+
+      <div class="card-grid">
+        @for (feature of features; track feature.title; let i = $index) {
+          <article class="card" [appReveal]="i * 110">
+            <div class="card-icon">{{ feature.icon }}</div>
+            <h3>{{ feature.title }}</h3>
+            <p>{{ feature.body }}</p>
+          </article>
+        }
+      </div>
+    </div>
+  </section>
+
+  <section class="section section-alt" id="how-it-works">
+    <div class="container">
+      <h2 class="section-title" appReveal>Three steps to a running app</h2>
+      <ol class="steps">
+        @for (step of steps; track step.num; let i = $index) {
+          <li [appReveal]="i * 110">
+            <span class="step-num">{{ step.num }}</span>
+            <h3>{{ step.title }}</h3>
+            <p>{{ step.body }}</p>
+          </li>
+        }
+      </ol>
+    </div>
+  </section>
+
+  <section class="section" id="pricing">
+    <div class="container">
+      <h2 class="section-title" appReveal>Honest pricing</h2>
+      <p class="section-sub" appReveal>It's a demo project. It's free. Forever.</p>
+
+      <div class="pricing-grid">
+        @for (plan of plans; track plan.name; let i = $index) {
+          <article class="price-card" [class.featured]="plan.featured" [appReveal]="i * 110">
+            @if (plan.featured) {
+              <span class="ribbon">Popular</span>
+            }
+            <h3>{{ plan.name }}</h3>
+            <p class="price">{{ plan.price }}<span>/mo</span></p>
+            <ul>
+              @for (perk of plan.perks; track perk) {
+                <li>{{ perk }}</li>
+              }
+            </ul>
+            <a
+              class="btn"
+              [class.btn-primary]="plan.featured"
+              [class.btn-ghost]="!plan.featured"
+              routerLink="/signup"
+              >{{ plan.cta }}</a
+            >
+          </article>
+        }
+      </div>
+    </div>
+  </section>
+
+  <section class="cta">
+    <div class="container cta-inner" appReveal>
+      <h2>Ready to build something small?</h2>
+      <p>Create your account and start poking at the code.</p>
+      <a class="btn btn-primary btn-lg" routerLink="/signup">Sign up free</a>
+    </div>
+  </section>
+</main>
+
+<app-site-footer />

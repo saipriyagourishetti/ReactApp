@@ -1,0 +1,15 @@
+# Angular / Node build artifacts
+/node_modules
+/dist
+/out-tsc
+/.angular
+
+# Logs
+npm-debug.log*
+yarn-error.log*
+
+# Editor
+.idea
+.vscode/*
+!.vscode/extensions.json
+.DS_Store

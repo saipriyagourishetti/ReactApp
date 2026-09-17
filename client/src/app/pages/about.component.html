@@ -1,0 +1,81 @@
+<app-site-header />
+
+<main id="main">
+  <section class="mission-hero">
+    <div class="container" style="max-width: 780px">
+      <p class="eyebrow">Our mission</p>
+      <h1>Build faster by starting with <span class="accent">less</span></h1>
+      <p class="lead">
+        This project exists to prove that you don't need a 300-package dependency tree to ship a
+        working product. Great software starts small, stays readable, and grows intentionally.
+      </p>
+    </div>
+  </section>
+
+  <section class="section" id="values">
+    <div class="container" style="max-width: 780px">
+      <h2 class="section-title" appReveal>What we believe in</h2>
+      <p class="section-sub" appReveal>Three principles guide every decision we make.</p>
+
+      <div class="card-grid">
+        @for (value of values; track value.title; let i = $index) {
+          <article class="card" [appReveal]="i * 110">
+            <div class="card-icon">{{ value.icon }}</div>
+            <h3>{{ value.title }}</h3>
+            <p>{{ value.body }}</p>
+          </article>
+        }
+      </div>
+    </div>
+  </section>
+
+  <section class="section section-alt" id="team">
+    <div class="container" style="max-width: 780px">
+      <h2 class="section-title" appReveal>Meet the team</h2>
+      <p class="section-sub" appReveal>A small, focused group of people who love clean code.</p>
+
+      <div class="team-grid">
+        @for (member of team; track member.initials; let i = $index) {
+          <div class="team-card" [appReveal]="i * 90">
+            <div class="team-avatar" [style.background]="member.gradient">
+              {{ member.initials }}
+            </div>
+            <h3>{{ member.name }}</h3>
+            <p class="team-role">{{ member.role }}</p>
+            <p>{{ member.bio }}</p>
+          </div>
+        }
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="timeline">
+    <div class="container" style="max-width: 780px">
+      <h2 class="section-title" appReveal>Our journey</h2>
+      <p class="section-sub" appReveal>A few milestones we're proud of.</p>
+
+      <ul class="timeline" style="margin-top: 40px">
+        @for (item of milestones; track item.year; let i = $index) {
+          <li class="timeline-item" [appReveal]="i * 90">
+            <span class="timeline-year">{{ item.year }}</span>
+            <h3>{{ item.title }}</h3>
+            <p>{{ item.body }}</p>
+          </li>
+        }
+      </ul>
+    </div>
+  </section>
+
+  <section class="cta">
+    <div class="container cta-inner" appReveal>
+      <h2>Ready to build something small?</h2>
+      <p>Join the growing community of developers who ship without the bloat.</p>
+      <div style="display: flex; gap: 14px; justify-content: center; flex-wrap: wrap">
+        <a class="btn btn-primary btn-lg" routerLink="/signup">Create free account</a>
+        <a class="btn btn-ghost btn-lg" routerLink="/dashboard">View Dashboard</a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<app-site-footer />

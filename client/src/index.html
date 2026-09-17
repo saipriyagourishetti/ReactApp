@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>ValueLabs Aide Autonomy</title>
+    <meta
+      name="description"
+      content="A zero-dependency Node.js sample app with a landing page and signup flow."
+    />
+    <base href="/" />
+    <link rel="icon" type="image/x-icon" href="favicon.ico" />
+    <script>
+      // Apply the saved theme before first paint to avoid a flash of the wrong colours.
+      (function () {
+        try {
+          var saved = localStorage.getItem('dp-theme');
+          var theme =
+            saved ||
+            (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+          document.documentElement.setAttribute('data-theme', theme);
+        } catch (e) {
+          document.documentElement.setAttribute('data-theme', 'dark');
+        }
+      })();
+    </script>
+  </head>
+  <body>
+    <app-root></app-root>
+  </body>
+</html>

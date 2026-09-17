@@ -1,0 +1,138 @@
+<app-site-header />
+
+<main class="auth-main" id="main">
+  <div class="container auth-grid">
+    <section class="auth-aside">
+      <div class="profile-aside">
+        <div class="avatar-lg" aria-hidden="true">AL</div>
+
+        <div>
+          <h2 style="margin: 0 0 4px; font-size: 1.4rem">Ada Lovelace</h2>
+          <span class="role-badge">Administrator</span>
+        </div>
+
+        <p>Building the future with zero dependencies and a whole lot of curiosity.</p>
+
+        <div class="profile-stats-row" style="width: 100%">
+          @for (stat of stats; track stat.label) {
+            <div class="profile-stat">
+              <span class="profile-stat-num" [style.color]="stat.color">{{ stat.value }}</span>
+              <span class="profile-stat-label">{{ stat.label }}</span>
+            </div>
+          }
+        </div>
+
+        <div class="demo-hint" style="width: 100%">
+          <strong>Demo mode</strong>
+          <p>
+            Changes here are illustrative — no API call is made. The in-memory store resets on
+            server restart.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="auth-card">
+      <h1>Edit Profile</h1>
+      <p class="auth-sub">Update your display name, bio, and notification preferences.</p>
+
+      <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
+        <div class="field">
+          <label for="display-name">Display name</label>
+          <input
+            id="display-name"
+            type="text"
+            formControlName="displayName"
+            autocomplete="name"
+            placeholder="Ada Lovelace"
+            [class.invalid]="displayNameInvalid"
+          />
+          <p class="error">
+            {{ displayNameInvalid ? 'Please enter a name with at least 2 characters.' : '' }}
+          </p>
+        </div>
+
+        <div class="field">
+          <label for="profile-email">
+            Email address
+            <span style="color: var(--muted); font-weight: 400">(read-only in demo)</span>
+          </label>
+          <input id="profile-email" type="email" formControlName="email" />
+        </div>
+
+        <div class="field">
+          <label for="bio">Bio</label>
+          <textarea
+            id="bio"
+            rows="3"
+            formControlName="bio"
+            placeholder="Tell us a bit about yourself..."
+          ></textarea>
+        </div>
+
+        <div class="field">
+          <label for="profile-role">
+            Role <span style="color: var(--muted); font-weight: 400">(disabled in demo)</span>
+          </label>
+          <select id="profile-role" formControlName="role">
+            <option value="user">User</option>
+            <option value="editor">Editor</option>
+            <option value="admin">Admin</option>
+          </select>
+        </div>
+
+        <div style="margin-bottom: 16px">
+          <p style="font-size: 0.9rem; font-weight: 600; margin: 0 0 10px">Notifications</p>
+
+          <div class="toggle-field">
+            <div>
+              <div class="toggle-label">Email alerts</div>
+              <div class="toggle-desc">Receive signup and login notifications</div>
+            </div>
+            <label class="toggle-switch">
+              <input type="checkbox" formControlName="emailAlerts" />
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+
+          <div class="toggle-field">
+            <div>
+              <div class="toggle-label">Weekly digest</div>
+              <div class="toggle-desc">Summary of activity every Monday</div>
+            </div>
+            <label class="toggle-switch">
+              <input type="checkbox" formControlName="weeklyDigest" />
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+
+          <div class="toggle-field">
+            <div>
+              <div class="toggle-label">Security alerts</div>
+              <div class="toggle-desc">Notify on suspicious login attempts</div>
+            </div>
+            <label class="toggle-switch">
+              <input type="checkbox" formControlName="securityAlerts" />
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+        </div>
+
+        <button class="btn btn-primary btn-block" type="submit" [disabled]="saving()">
+          {{ saving() ? 'Saving…' : 'Save changes' }}
+        </button>
+
+        <p class="form-status" [class.success]="status()" role="status" aria-live="polite">
+          {{ status() }}
+        </p>
+      </form>
+
+      <p class="auth-footer">
+        View your activity on the <a routerLink="/dashboard">Dashboard</a> &middot;
+        <a routerLink="/about">About</a>
+      </p>
+    </section>
+  </div>
+</main>
+
+<app-site-footer />
