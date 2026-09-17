@@ -3,6 +3,20 @@
 (function () {
   const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
+  // Toasts come from ui.js; degrade gracefully if it has not loaded.
+  function notify(message, kind) {
+    if (window.UI && typeof window.UI.toast === 'function') {
+      window.UI.toast(message, kind);
+    }
+  }
+
+  // Re-run input listeners so widgets like the strength meter reset with the form.
+  function refreshWidgets(form) {
+    Array.prototype.forEach.call(form.elements, function (el) {
+      if (el.tagName === 'INPUT') el.dispatchEvent(new Event('input', { bubbles: true }));
+    });
+  }
+
   /**
    * Shared helpers for a form that uses [data-error-for] holders
    * and a .form-status element.
@@ -107,6 +121,7 @@
 
       if (ui.applyErrors(validate(data))) {
         ui.showStatus('Please fix the highlighted fields.', 'failure');
+        notify('Please fix the highlighted fields.', 'warning');
         return;
       }
 
@@ -124,10 +139,12 @@
         if (!response.ok) {
           if (payload.field) ui.setError(payload.field, payload.error);
           ui.showStatus(payload.error || 'Signup failed. Please try again.', 'failure');
+          notify(payload.error || 'Signup failed. Please try again.', 'error');
           return;
         }
 
         form.reset();
+        refreshWidgets(form);
         ui.showStatus(
           'Welcome, ' +
             payload.user.name +
@@ -136,8 +153,10 @@
             ') is ready. You can now log in.',
           'success'
         );
+        notify('Account created — welcome, ' + payload.user.name + '!', 'success');
       } catch (err) {
         ui.showStatus('Network error — is the server running? (npm start)', 'failure');
+        notify('Network error — is the server running?', 'error');
       } finally {
         submitBtn.disabled = false;
         submitBtn.textContent = 'Create account';
@@ -178,6 +197,7 @@
 
       if (ui.applyErrors(validate(data))) {
         ui.showStatus('Please fix the highlighted fields.', 'failure');
+        notify('Please fix the highlighted fields.', 'warning');
         return;
       }
 
@@ -193,21 +213,37 @@
         if (!response.ok) {
           if (payload.field) ui.setError(payload.field, payload.error);
           ui.showStatus(payload.error || 'Login failed. Please try again.', 'failure');
+          notify(payload.error || 'Login failed. Please try again.', 'error');
           return;
         }
 
         form.reset();
+        refreshWidgets(form);
         ui.showStatus(
           'Logged in as ' + payload.user.name + ' (' + payload.user.role + ').',
           'success'
         );
+        notify('Welcome back, ' + payload.user.name + '!', 'success');
       } catch (err) {
         ui.showStatus('Network error — is the server running? (npm start)', 'failure');
+        notify('Network error — is the server running?', 'error');
       } finally {
         submitBtn.disabled = false;
         submitBtn.textContent = 'Log in';
       }
     });
+
+    // "Fill the form" shortcut next to the demo credentials.
+    const fillDemo = document.getElementById('fill-demo');
+    if (fillDemo) {
+      fillDemo.addEventListener('click', function () {
+        form.elements.email.value = 'ada@example.com';
+        form.elements.password.value = 'analytical1';
+        ui.clearErrors(fields);
+        notify('Demo credentials filled in.', 'info');
+        submitBtn.focus();
+      });
+    }
   }
 
   initSignup();
