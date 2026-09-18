@@ -20,14 +20,19 @@ A small, dependency-free Node.js project created purely for testing repositories
 │   ├── styles.css      # shared stylesheet
 │   └── app.js          # client-side signup + login validation and fetch
 ├── src
-│   ├── server.js       # zero-dependency HTTP server + signup/login API
-│   ├── index.js        # CLI demo entry point
-│   ├── calculator.js   # arithmetic helpers
-│   └── userStore.js    # in-memory user store with password hashing
+│   ├── server.js        # zero-dependency HTTP server + auth API
+│   ├── index.js         # CLI demo entry point
+│   ├── calculator.js    # arithmetic helpers
+│   ├── userStore.js     # in-memory user store with password hashing
+│   ├── sessionStore.js  # cookie-based session tokens with sliding expiry
+│   └── rateLimiter.js   # sliding-window login throttling
 └── test
     ├── calculator.test.js
     ├── userStore.test.js
-    └── auth.test.js    # password hashing + credential verification
+    ├── auth.test.js          # password hashing + credential verification
+    ├── sessionStore.test.js  # session tokens, TTL and cookie helpers
+    ├── rateLimiter.test.js   # sliding-window throttling
+    └── server.test.js        # end-to-end HTTP tests for every endpoint
 ```
 
 ## Usage
@@ -44,6 +49,7 @@ Then open:
 - Signup page: http://localhost:3000/signup.html
 - Login page: http://localhost:3000/login.html
 - Users API: http://localhost:3000/api/users
+- Health check: http://localhost:3000/api/health
 
 A demo account is seeded at startup:
 
@@ -56,6 +62,15 @@ Override the port with the `PORT` environment variable:
 ```bash
 PORT=8080 npm start
 ```
+
+### Environment variables
+
+| Variable | Default | Description |
+| --- | --- | --- |
+| `PORT` | `3000` | Port the HTTP server listens on |
+| `COOKIE_SECURE` | unset | Set to `1` to add `Secure` to the session cookie (HTTPS only) |
+| `QUIET` | unset | Set to `1` to silence the per-request access log |
+| `NODE_ENV` | unset | `test` also silences the access log |
 
 Run the original CLI demo:
 
@@ -93,17 +108,78 @@ which emails are registered.
 
 ## HTTP API
 
-| Method | Route | Description |
-| --- | --- | --- |
-| `GET` | `/` | Serves the landing page |
-| `GET` | `/signup.html` | Serves the signup page |
-| `GET` | `/login.html` | Serves the login page |
-| `POST` | `/api/signup` | Creates a user from `{ name, email, password, role }` — returns `201` with the user, `400` on validation errors, `409` on duplicate email |
-| `POST` | `/api/login` | Verifies `{ email, password }` — returns `200` with the user, `400` on missing fields, `401` on bad credentials |
-| `GET` | `/api/users` | Returns `{ count, users }` for everything currently in the store |
+| Method | Route | Auth | Description |
+| --- | --- | --- | --- |
+| `GET` | `/` | – | Serves the landing page |
+| `GET` | `/signup.html` | – | Serves the signup page |
+| `GET` | `/login.html` | – | Serves the login page |
+| `POST` | `/api/signup` | – | Creates a user from `{ name, email, password, role }` — returns `201` with the user **and a session cookie**, `400` on validation errors, `409` on duplicate email |
+| `POST` | `/api/login` | – | Verifies `{ email, password }` — returns `200` with the user **and a session cookie**, `400` on missing fields, `401` on bad credentials, `429` when throttled |
+| `POST` | `/api/logout` | optional | Destroys the current session and clears the cookie — always `200 { ok, destroyed }` |
+| `GET` | `/api/me` | required | Returns `{ user, session }` for the caller and slides the session expiry forward; `401` without a valid cookie |
+| `GET` | `/api/sessions` | required | Lists the caller's active sessions (`createdAt`, `lastSeenAt`, `expiresAt`, `userAgent`, `ip`) — never any tokens |
+| `POST`/`PUT` | `/api/password` | required | Changes the password from `{ currentPassword, newPassword }` — returns `200 { user, revokedSessions }`, `400` on weak/reused passwords, `401` on a wrong current password |
+| `GET` | `/api/users` | – | Returns `{ count, users }` for everything currently in the store |
+| `GET` | `/api/health` | – | Liveness probe: `{ status, uptimeSeconds, startedAt, users, sessions, node }` |
 
-> Users live in memory only — restarting the server clears them.
-> Password hashes are never included in any API response.
+Any other `/api/*` path returns a JSON `404`, and a wrong method on a known
+route returns `405` with an `Allow` header.
+
+> Users and sessions live in memory only — restarting the server clears them.
+> Password hashes and session tokens are never included in any API response.
+
+### Sessions
+
+A successful signup or login issues an opaque 256-bit token and returns it as a
+cookie:
+
+```
+Set-Cookie: sid=<64 hex chars>; Path=/; HttpOnly; SameSite=Lax; Max-Age=1800
+```
+
+- Only the **SHA-256 hash** of the token is kept server-side, so a leaked store
+  cannot be replayed directly.
+- Sessions use a **sliding 30-minute expiry** — every authenticated request
+  refreshes the window via `SessionStore.touch()`.
+- `HttpOnly` keeps the token away from client-side JavaScript and `SameSite=Lax`
+  blocks the obvious CSRF vectors. Add `Secure` with `COOKIE_SECURE=1`.
+- Expired sessions are purged lazily on read, plus by a sweeper that runs every
+  5 minutes.
+- Changing a password revokes **every other** session for that user, so a cookie
+  stolen elsewhere immediately stops working.
+
+```bash
+# log in, keep the cookie, then use it
+curl -c jar.txt -X POST http://localhost:3000/api/login \
+  -H 'Content-Type: application/json' \
+  -d '{"email":"ada@example.com","password":"analytical1"}'
+
+curl -b jar.txt http://localhost:3000/api/me
+curl -b jar.txt -X POST http://localhost:3000/api/logout
+```
+
+### Login rate limiting
+
+Failed logins are throttled per `ip|email` pair: **5 attempts per 15 minutes**.
+
+- Each `401` response includes `attemptsRemaining` so a UI can warn the user.
+- Once the limit is hit the endpoint replies `429` with a `Retry-After` header
+  and `{ error, retryAfter }`, even if the password is correct.
+- Only *failures* are counted, and a successful login resets the counter, so
+  normal typos never lock anyone out.
+- Keying on ip **and** email means one noisy address cannot lock out someone
+  else's account.
+
+### Request logging
+
+Every response is logged as `<iso timestamp> <method> <url> <status> <ms>`, for
+example:
+
+```
+2026-09-18T06:14:00.123Z POST /api/login 200 4.7ms
+```
+
+Set `QUIET=1` (or `NODE_ENV=test`) to turn the log off.
 
 ## Password handling
 
@@ -114,8 +190,9 @@ Verification uses `crypto.timingSafeEqual` for a constant-time comparison.
 Requirements enforced on both the client and the server: at least 8 characters,
 including at least one letter and one number.
 
-> This is still a demo — there are no sessions, tokens or cookies. A successful
-> login simply returns the user record.
+> This is still a demo: sessions are held in a plain `Map`, so they are lost on
+> restart and are not shared between processes. Swap `SessionStore` for Redis (or
+> similar) before using anything like this for real.
 
 ## Modules
 
@@ -154,6 +231,52 @@ store.create({
 
 store.verifyCredentials('ada@example.com', 'analytical1'); // -> user record
 store.verifyCredentials('ada@example.com', 'wrong');       // -> null
+```
+
+### `SessionStore`
+
+| Method | Description |
+| --- | --- |
+| `create(userId, { userAgent, ip })` | Starts a session, returns `{ token, session }` — the raw token is only available here |
+| `get(token)` | Resolves a session **without** extending it, or `null` |
+| `touch(token)` | Resolves a session and slides its expiry forward |
+| `destroy(token)` | Ends one session |
+| `destroyAllForUser(userId, { except })` | Ends every session for a user, optionally keeping the current one |
+| `listForUser(userId)` | Live sessions for a user, safe to serialise |
+| `sweep()` | Purges expired sessions, returns how many |
+| `size` | Sessions currently held |
+
+Helpers: `createToken`, `hashToken`, `parseCookies`, `buildSessionCookie`,
+`buildClearCookie`.
+
+```js
+const { SessionStore } = require('./src/sessionStore');
+
+const sessions = new SessionStore({ ttlMs: 30 * 60 * 1000 });
+const { token } = sessions.create(1, { ip: '127.0.0.1' });
+
+sessions.touch(token);   // -> session, expiry refreshed
+sessions.destroy(token); // -> true
+```
+
+### `RateLimiter`
+
+| Method | Description |
+| --- | --- |
+| `check(key)` | `{ limited, remaining, retryAfterMs }` without recording an attempt |
+| `fail(key)` | Records a failed attempt and returns the state after it |
+| `reset(key)` | Forgets a key (call after a successful login) |
+| `sweep()` | Drops keys whose attempts have all aged out |
+| `size` | Keys currently tracked |
+
+```js
+const { RateLimiter } = require('./src/rateLimiter');
+
+const limiter = new RateLimiter({ limit: 5, windowMs: 15 * 60 * 1000 });
+
+if (limiter.check('1.2.3.4|ada@example.com').limited) return; // 429
+limiter.fail('1.2.3.4|ada@example.com');                      // wrong password
+limiter.reset('1.2.3.4|ada@example.com');                     // logged in
 ```
 
 ## License
