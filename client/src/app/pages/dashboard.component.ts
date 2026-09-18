@@ -1,7 +1,9 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 
 import { ApiService } from '../core/api.service';
+import { AuthService } from '../core/auth.service';
+import { User } from '../core/models';
 
 interface StatCard {
   label: string;
@@ -20,8 +22,12 @@ interface Activity {
 /**
  * Dashboard, converted from public/dashboard.html.
  *
- * The static "Total Users" tile is now populated from GET /api/users, which
- * the original page never called.
+ * Enhancements:
+ * - Total Users tile and the searchable user table are both populated from
+ *   GET /api/users.
+ * - Header shows the currently logged-in user's name from AuthService.
+ * - Sidebar footer has a Log out button wired to AuthService.logout().
+ * - Skeleton loading state while data is in-flight.
  */
 @Component({
   selector: 'app-dashboard',
@@ -31,9 +37,32 @@ interface Activity {
 })
 export class DashboardComponent implements OnInit {
   private readonly api = inject(ApiService);
+  readonly auth = inject(AuthService);
 
   readonly userCount = signal<string>('—');
+  readonly users = signal<User[]>([]);
+  readonly searchQuery = signal('');
+  readonly loading = signal(true);
   readonly year = new Date().getFullYear();
+
+  /** Derive initials for the avatar from the current user's name. */
+  readonly userInitials = computed(() => {
+    const name = this.auth.currentUser()?.displayName ?? this.auth.currentUser()?.name ?? '';
+    const parts = name.trim().split(/\s+/);
+    if (parts.length >= 2) return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+    return name.slice(0, 2).toUpperCase() || 'U?';
+  });
+
+  readonly filteredUsers = computed(() => {
+    const query = this.searchQuery().toLowerCase().trim();
+    if (!query) return this.users();
+    return this.users().filter(
+      (u) =>
+        u.name.toLowerCase().includes(query) ||
+        u.email.toLowerCase().includes(query) ||
+        u.role.toLowerCase().includes(query)
+    );
+  });
 
   readonly cards: StatCard[] = [
     { label: 'Active Sessions', value: '342', trend: '▲ 5% today', trendKind: 'up', color: 'var(--accent-2)' },
@@ -60,9 +89,26 @@ export class DashboardComponent implements OnInit {
 
   ngOnInit(): void {
     this.api.listUsers().subscribe({
-      next: ({ count }) => this.userCount.set(String(count)),
-      // The dashboard is still useful without the live number.
-      error: () => this.userCount.set('n/a'),
+      next: ({ count, users }) => {
+        this.userCount.set(String(count));
+        this.users.set(users);
+        this.loading.set(false);
+      },
+      error: () => {
+        this.userCount.set('n/a');
+        this.loading.set(false);
+      },
     });
+  }
+
+  logout(): void {
+    this.auth.logout();
+  }
+
+  /** Role badge CSS class */
+  roleBadgeClass(role: string): string {
+    if (role === 'admin') return 'badge badge-accent';
+    if (role === 'editor') return 'badge badge-success';
+    return 'badge';
   }
 }

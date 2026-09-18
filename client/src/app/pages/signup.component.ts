@@ -5,10 +5,11 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { toSignal } from '@angular/core/rxjs-interop';
 
 import { ApiError, ApiService } from '../core/api.service';
+import { AuthService } from '../core/auth.service';
 import { UserRole } from '../core/models';
 import { scorePassword } from '../core/password-strength';
 import { ToastService } from '../core/toast.service';
@@ -40,7 +41,9 @@ type StatusKind = 'success' | 'failure' | '';
 export class SignupComponent {
   private readonly fb = inject(FormBuilder);
   private readonly api = inject(ApiService);
+  private readonly auth = inject(AuthService);
   private readonly toast = inject(ToastService);
+  private readonly router = inject(Router);
 
   readonly submitting = signal(false);
   readonly status = signal<{ message: string; kind: StatusKind }>({ message: '', kind: '' });
@@ -127,12 +130,9 @@ export class SignupComponent {
       .subscribe({
         next: ({ user }) => {
           this.submitting.set(false);
-          this.form.reset({ role: 'user', terms: false });
-          this.status.set({
-            message: `Welcome, ${user.name}! Your account (#${user.id}) is ready. You can now log in.`,
-            kind: 'success',
-          });
+          this.auth.setUser(user);
           this.toast.success(`Account created — welcome, ${user.name}!`);
+          this.router.navigate(['/dashboard']);
         },
         error: (err: ApiError) => {
           this.submitting.set(false);

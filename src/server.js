@@ -147,6 +147,75 @@ async function handleLogin(req, res) {
   sendJson(res, 200, { user });
 }
 
+async function handleUpdateProfile(req, res) {
+  let data;
+  try {
+    const raw = await readBody(req);
+    data = JSON.parse(raw || '{}');
+  } catch (err) {
+    sendJson(res, 400, { error: 'Invalid JSON payload.' });
+    return;
+  }
+
+  const email = typeof data.email === 'string' ? data.email.trim() : '';
+  const displayName = typeof data.displayName === 'string' ? data.displayName.trim() : null;
+  const bio = typeof data.bio === 'string' ? data.bio : null;
+
+  if (!email) {
+    sendJson(res, 400, { error: 'Email is required.', field: 'email' });
+    return;
+  }
+  if (displayName !== null && displayName.length < 2) {
+    sendJson(res, 400, { error: 'Display name must be at least 2 characters.', field: 'displayName' });
+    return;
+  }
+
+  const updated = store.updateProfile(email, { displayName, bio });
+  if (!updated) {
+    sendJson(res, 404, { error: 'User not found.' });
+    return;
+  }
+
+  sendJson(res, 200, { user: updated });
+}
+
+async function handleChangePassword(req, res) {
+  let data;
+  try {
+    const raw = await readBody(req);
+    data = JSON.parse(raw || '{}');
+  } catch (err) {
+    sendJson(res, 400, { error: 'Invalid JSON payload.' });
+    return;
+  }
+
+  const email = typeof data.email === 'string' ? data.email.trim() : '';
+  const currentPassword = typeof data.currentPassword === 'string' ? data.currentPassword : '';
+  const newPassword = typeof data.newPassword === 'string' ? data.newPassword : '';
+
+  if (!email) {
+    sendJson(res, 400, { error: 'Email is required.', field: 'email' });
+    return;
+  }
+  if (!currentPassword) {
+    sendJson(res, 400, { error: 'Current password is required.', field: 'currentPassword' });
+    return;
+  }
+
+  const passwordProblem = validatePassword(newPassword);
+  if (passwordProblem) {
+    sendJson(res, 400, { error: passwordProblem, field: 'newPassword' });
+    return;
+  }
+
+  try {
+    store.changePassword(email, currentPassword, newPassword);
+    sendJson(res, 200, { message: 'Password changed successfully.' });
+  } catch (err) {
+    sendJson(res, 400, { error: err.message, field: 'currentPassword' });
+  }
+}
+
 function createServer() {
   return http.createServer((req, res) => {
     const { pathname } = new URL(req.url, `http://${req.headers.host || 'localhost'}`);
@@ -173,6 +242,26 @@ function createServer() {
 
     if (pathname === '/api/users' && req.method === 'GET') {
       sendJson(res, 200, { count: store.size, users: store.list() });
+      return;
+    }
+
+    if (pathname === '/api/profile') {
+      if (req.method !== 'PUT') {
+        res.setHeader('Allow', 'PUT');
+        sendJson(res, 405, { error: 'Method not allowed. Use PUT.' });
+        return;
+      }
+      handleUpdateProfile(req, res);
+      return;
+    }
+
+    if (pathname === '/api/change-password') {
+      if (req.method !== 'POST') {
+        res.setHeader('Allow', 'POST');
+        sendJson(res, 405, { error: 'Method not allowed. Use POST.' });
+        return;
+      }
+      handleChangePassword(req, res);
       return;
     }
 

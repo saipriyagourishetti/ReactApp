@@ -118,7 +118,13 @@ Key test config files in `client/`:
 - **Angular standalone components throughout** — no NgModules.
 - **TypeScript strict mode** including `strictTemplates` and `strictInjectionParameters`.
 - **Module resolution is `"bundler"`** (Angular 17 / esbuild default) — required in tsconfig, do not change.
+- **`useDefineForClassFields: false` and `experimentalDecorators: true`** are required for Angular decorators. Do not change these tsconfig settings.
+- **`tsconfig.app.json` has `"types": []`** (intentionally empty) — prevents Jest types from leaking into the production build. `tsconfig.spec.json` adds `@types/jest`.
 - **Theme anti-FOUC:** `client/src/index.html` has an inline script that reads `dp-theme` from `localStorage` before Angular boots. Do not remove it.
+- **`karma.conf.js` and `@types/jasmine` are vestigial.** The `npm test` script runs Jest directly, not `ng test` (which would invoke Karma). Do not use `ng test`.
+- **Custom `emailFormat` validator** in `core/validators.ts` uses the same regex as the server (`/^[^\s@]+@[^\s@]+\.[^\s@]+$/`). Do not replace it with Angular's built-in `Validators.email` — the two diverge.
+- **`passwordsMatch` group validator** attaches errors to the `confirm` control via `setErrors()`, not to the form group. This is intentional for template error display.
+- **`UserStore.update()` allowlist** is `['name', 'email', 'role']` — unknown fields including `passwordHash` are silently ignored.
 
 ---
 

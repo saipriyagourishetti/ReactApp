@@ -1,8 +1,9 @@
 import { Component, inject, signal } from '@angular/core';
 import { FormBuilder, FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
-import { RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 
 import { ApiError, ApiService } from '../core/api.service';
+import { AuthService } from '../core/auth.service';
 import { ToastService } from '../core/toast.service';
 import { emailFormat } from '../core/validators';
 import { RevealDirective } from '../shared/reveal.directive';
@@ -28,7 +29,10 @@ const DEMO_PASSWORD = 'analytical1';
 export class LoginComponent {
   private readonly fb = inject(FormBuilder);
   private readonly api = inject(ApiService);
+  private readonly auth = inject(AuthService);
   private readonly toast = inject(ToastService);
+  private readonly router = inject(Router);
+  private readonly route = inject(ActivatedRoute);
 
   readonly demoEmail = DEMO_EMAIL;
   readonly demoPassword = DEMO_PASSWORD;
@@ -95,12 +99,10 @@ export class LoginComponent {
     this.api.login({ email: email.trim(), password }).subscribe({
       next: ({ user }) => {
         this.submitting.set(false);
-        this.form.reset();
-        this.status.set({
-          message: `Logged in as ${user.name} (${user.role}).`,
-          kind: 'success',
-        });
+        this.auth.setUser(user);
         this.toast.success(`Welcome back, ${user.name}!`);
+        const redirectUrl = this.route.snapshot.queryParamMap.get('redirectUrl') ?? '/dashboard';
+        this.router.navigateByUrl(redirectUrl);
       },
       error: (err: ApiError) => {
         this.submitting.set(false);

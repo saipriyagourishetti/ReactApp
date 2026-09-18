@@ -70,6 +70,7 @@ class UserStore {
 
   /**
    * Strip secret fields before handing a record to a caller.
+   * Optional profile fields (displayName, bio) are included when present.
    */
   static toPublic(user) {
     const { passwordHash, ...safe } = user;
@@ -153,6 +154,51 @@ class UserStore {
 
     user.passwordHash = hashPassword(password);
     return UserStore.toPublic(user);
+  }
+
+  /**
+   * Update profile fields (displayName, bio) for a user looked up by email.
+   * Returns the updated public record, or null if the user is not found.
+   */
+  updateProfile(email, { displayName, bio } = {}) {
+    if (typeof email !== 'string') return null;
+    const target = email.toLowerCase();
+    for (const user of this.users.values()) {
+      if (user.email === target) {
+        if (displayName !== undefined) user.displayName = String(displayName).trim();
+        if (bio !== undefined) user.bio = String(bio).slice(0, 280);
+        return UserStore.toPublic(user);
+      }
+    }
+    return null;
+  }
+
+  /**
+   * Change a user's password after verifying their current password.
+   * Returns `true` on success, or throws an Error describing the failure.
+   */
+  changePassword(email, currentPassword, newPassword) {
+    if (typeof email !== 'string') throw new Error('Invalid email.');
+    const target = email.toLowerCase();
+    let match = null;
+    for (const user of this.users.values()) {
+      if (user.email === target) {
+        match = user;
+        break;
+      }
+    }
+
+    if (!match) throw new Error('User not found.');
+    if (!match.passwordHash) throw new Error('No password set for this account.');
+    if (!verifyPassword(currentPassword, match.passwordHash)) {
+      throw new Error('Current password is incorrect.');
+    }
+
+    const problem = validatePassword(newPassword);
+    if (problem) throw new TypeError(problem);
+
+    match.passwordHash = hashPassword(newPassword);
+    return true;
   }
 
   /**

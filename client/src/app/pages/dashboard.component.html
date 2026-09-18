@@ -31,21 +31,18 @@
           <span class="sidebar-icon">◇</span><span>Pricing</span>
         </a>
       </li>
-      <li>
-        <a routerLink="/signup" routerLinkActive="active">
-          <span class="sidebar-icon">+</span><span>Sign up</span>
-        </a>
-      </li>
-      <li>
-        <a routerLink="/login" routerLinkActive="active">
-          <span class="sidebar-icon">→</span><span>Log in</span>
-        </a>
-      </li>
     </ul>
 
     <div class="sidebar-footer">
       <p>&copy; {{ year }} ValueLabs Aide Autonomy</p>
-      <p>MIT licensed</p>
+      <button
+        class="btn btn-ghost btn-sm"
+        style="width: 100%; margin-top: 8px"
+        type="button"
+        (click)="logout()"
+      >
+        Log out
+      </button>
     </div>
   </aside>
 
@@ -53,10 +50,14 @@
     <header class="site-header" style="position: relative; margin: -36px -40px 32px; border-radius: 0">
       <nav class="nav container" style="max-width: 100%; padding: 0 40px">
         <div style="display: flex; align-items: center; gap: 14px">
-          <div class="avatar-sm" aria-hidden="true">AL</div>
+          <div class="avatar-sm" aria-hidden="true">{{ userInitials() }}</div>
           <div>
-            <div style="font-weight: 600; font-size: 0.95rem">Ada Lovelace</div>
-            <div style="font-size: 0.8rem; color: var(--muted)">Administrator</div>
+            <div style="font-weight: 600; font-size: 0.95rem">
+              {{ auth.currentUser()?.displayName ?? auth.currentUser()?.name ?? 'User' }}
+            </div>
+            <div style="font-size: 0.8rem; color: var(--muted); text-transform: capitalize">
+              {{ auth.currentUser()?.role ?? '' }}
+            </div>
           </div>
         </div>
         <ul class="nav-links">
@@ -74,18 +75,25 @@
     <div style="margin-bottom: 28px">
       <p class="eyebrow" style="display: inline-block; margin-bottom: 8px">Overview</p>
       <h1 style="margin: 0 0 6px; font-size: clamp(1.5rem, 3vw, 2rem)">
-        Good morning, <span class="accent">Ada</span> 👋
+        Good morning,
+        <span class="accent">{{ (auth.currentUser()?.displayName ?? auth.currentUser()?.name ?? 'there').split(' ')[0] }}</span>
+        👋
       </h1>
       <p style="color: var(--muted); margin: 0">
         Here's what's happening with your project today.
       </p>
     </div>
 
+    <!-- Stats Grid -->
     <div class="stats-grid">
       <div class="stat-card">
         <div class="stat-label">Total Users</div>
-        <div class="stat-num accent">{{ userCount() }}</div>
-        <span class="stat-trend up">live from /api/users</span>
+        @if (loading()) {
+          <div class="skeleton" style="height: 2.5rem; width: 60%; border-radius: var(--radius-sm)"></div>
+        } @else {
+          <div class="stat-num accent">{{ userCount() }}</div>
+          <span class="stat-trend up">live from /api/users</span>
+        }
       </div>
       @for (card of cards; track card.label) {
         <div class="stat-card">
@@ -94,6 +102,92 @@
           <span class="stat-trend" [class]="'stat-trend ' + card.trendKind">{{ card.trend }}</span>
         </div>
       }
+    </div>
+
+    <!-- Users Table -->
+    <div class="panel" style="margin-bottom: 22px">
+      <div class="panel-header" style="flex-wrap: wrap; gap: 12px">
+        <h2 class="panel-title">Users</h2>
+        <input
+          type="search"
+          placeholder="Search by name, email or role…"
+          style="
+            flex: 1;
+            min-width: 180px;
+            max-width: 320px;
+            padding: 8px 14px;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border);
+            background: var(--bg-alt);
+            color: var(--text);
+            font-size: 0.9rem;
+          "
+          [value]="searchQuery()"
+          (input)="searchQuery.set($any($event.target).value)"
+          aria-label="Search users"
+        />
+      </div>
+
+      <div style="overflow-x: auto">
+        <table style="width: 100%; border-collapse: collapse; font-size: 0.9rem">
+          <thead>
+            <tr style="border-bottom: 1px solid var(--border)">
+              <th style="text-align: left; padding: 10px 12px; color: var(--muted); font-weight: 600">Name</th>
+              <th style="text-align: left; padding: 10px 12px; color: var(--muted); font-weight: 600">Email</th>
+              <th style="text-align: left; padding: 10px 12px; color: var(--muted); font-weight: 600">Role</th>
+              <th style="text-align: left; padding: 10px 12px; color: var(--muted); font-weight: 600">Joined</th>
+            </tr>
+          </thead>
+          <tbody>
+            @if (loading()) {
+              @for (row of [1, 2, 3]; track row) {
+                <tr style="border-bottom: 1px solid var(--border)">
+                  <td style="padding: 12px">
+                    <div class="skeleton" style="height: 1rem; width: 80%; border-radius: 4px"></div>
+                  </td>
+                  <td style="padding: 12px">
+                    <div class="skeleton" style="height: 1rem; width: 90%; border-radius: 4px"></div>
+                  </td>
+                  <td style="padding: 12px">
+                    <div class="skeleton" style="height: 1rem; width: 50%; border-radius: 4px"></div>
+                  </td>
+                  <td style="padding: 12px">
+                    <div class="skeleton" style="height: 1rem; width: 60%; border-radius: 4px"></div>
+                  </td>
+                </tr>
+              }
+            } @else if (filteredUsers().length === 0) {
+              <tr>
+                <td colspan="4" style="padding: 24px; text-align: center; color: var(--muted)">
+                  @if (searchQuery()) {
+                    No users match "{{ searchQuery() }}".
+                  } @else {
+                    No users found.
+                  }
+                </td>
+              </tr>
+            } @else {
+              @for (user of filteredUsers(); track user.id) {
+                <tr
+                  style="border-bottom: 1px solid var(--border); transition: background 0.15s"
+                  [style.background]="'transparent'"
+                  (mouseenter)="$event.currentTarget.style.background = 'var(--bg-alt)'"
+                  (mouseleave)="$event.currentTarget.style.background = 'transparent'"
+                >
+                  <td style="padding: 12px; font-weight: 500">{{ user.name }}</td>
+                  <td style="padding: 12px; color: var(--muted)">{{ user.email }}</td>
+                  <td style="padding: 12px">
+                    <span [class]="roleBadgeClass(user.role)">{{ user.role }}</span>
+                  </td>
+                  <td style="padding: 12px; color: var(--muted); font-size: 0.85rem">
+                    {{ user.createdAt | slice:0:10 }}
+                  </td>
+                </tr>
+              }
+            }
+          </tbody>
+        </table>
+      </div>
     </div>
 
     <div class="dashboard-panels">

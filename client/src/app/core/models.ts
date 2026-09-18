@@ -12,6 +12,10 @@ export interface User {
   role: UserRole;
   createdAt: string;
   hasPassword: boolean;
+  /** Optional display name distinct from the account `name` field. */
+  displayName?: string;
+  /** Optional short biography shown on the profile page. */
+  bio?: string;
 }
 
 /** Successful response body for /api/signup and /api/login. */
@@ -38,4 +42,18 @@ export interface SignupPayload {
 export interface LoginPayload {
   email: string;
   password: string;
+}
+
+/** Payload for PUT /api/profile */
+export interface ProfilePayload {
+  email: string;
+  displayName: string;
+  bio: string;
+}
+
+/** Payload for POST /api/change-password */
+export interface ChangePasswordPayload {
+  email: string;
+  currentPassword: string;
+  newPassword: string;
 }

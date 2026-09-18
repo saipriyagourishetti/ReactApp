@@ -2,7 +2,15 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable, catchError, throwError } from 'rxjs';
 
-import { ApiErrorBody, AuthResponse, LoginPayload, SignupPayload, User } from './models';
+import {
+  ApiErrorBody,
+  AuthResponse,
+  ChangePasswordPayload,
+  LoginPayload,
+  ProfilePayload,
+  SignupPayload,
+  User,
+} from './models';
 
 /**
  * A typed error carrying the API's `field` hint so components can map a
@@ -43,6 +51,24 @@ export class ApiService {
     return this.http
       .get<{ count: number; users: User[] }>('/api/users')
       .pipe(catchError((err: HttpErrorResponse) => throwError(() => this.toApiError(err))));
+  }
+
+  /**
+   * Update the profile of the currently logged-in user.
+   * Calls PUT /api/profile and returns the updated user record.
+   */
+  updateProfile(payload: ProfilePayload): Observable<AuthResponse> {
+    return this.http
+      .put<AuthResponse>('/api/profile', payload)
+      .pipe(catchError((err: HttpErrorResponse) => throwError(() => this.toApiError(err))));
+  }
+
+  /**
+   * Change the password of the currently logged-in user.
+   * Calls POST /api/change-password.
+   */
+  changePassword(payload: ChangePasswordPayload): Observable<{ message: string }> {
+    return this.post<{ message: string }>('/api/change-password', payload);
   }
 
   private post<T>(url: string, body: unknown): Observable<T> {

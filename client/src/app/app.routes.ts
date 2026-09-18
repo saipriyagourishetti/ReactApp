@@ -1,10 +1,14 @@
 import { Routes } from '@angular/router';
 
+import { authGuard } from './core/auth.guard';
+
 /**
  * One route per page that used to be a separate .html file in public/.
  * All pages are lazily loaded so the initial bundle stays small.
  *
  * Legacy ".html" URLs are redirected so existing links keep working.
+ * Protected routes use `authGuard` which redirects unauthenticated users to
+ * `/login` with a `redirectUrl` query param.
  */
 export const APP_ROUTES: Routes = [
   {
@@ -31,11 +35,13 @@ export const APP_ROUTES: Routes = [
     path: 'dashboard',
     loadComponent: () => import('./pages/dashboard.component').then((m) => m.DashboardComponent),
     title: 'Dashboard — ValueLabs Aide Autonomy',
+    canActivate: [authGuard],
   },
   {
     path: 'profile',
     loadComponent: () => import('./pages/profile.component').then((m) => m.ProfileComponent),
     title: 'Profile — ValueLabs Aide Autonomy',
+    canActivate: [authGuard],
   },
 
   // Backwards-compatible redirects from the old static file names.
@@ -46,5 +52,11 @@ export const APP_ROUTES: Routes = [
   { path: 'dashboard.html', redirectTo: 'dashboard', pathMatch: 'full' },
   { path: 'profile.html', redirectTo: 'profile', pathMatch: 'full' },
 
-  { path: '**', redirectTo: '' },
+  // 404 — show a proper Not Found page instead of silently redirecting to home.
+  {
+    path: '**',
+    loadComponent: () =>
+      import('./pages/not-found.component').then((m) => m.NotFoundComponent),
+    title: 'Page not found — ValueLabs Aide Autonomy',
+  },
 ];
