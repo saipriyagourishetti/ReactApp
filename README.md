@@ -20,12 +20,24 @@ A small, dependency-free Node.js project created purely for testing repositories
 │   ├── styles.css      # shared stylesheet
 │   └── app.js          # client-side signup + login validation and fetch
 ├── src
-│   ├── server.js        # zero-dependency HTTP server + auth API
+│   ├── server.js        # HTTP server entry point (creates server, seeds demo account)
+│   ├── app.js           # request handler — composes middleware and router
+│   ├── router.js        # method+path dispatcher; returns 404/405 for unknown routes
+│   ├── middleware.js     # compose(), requestLogger(), errorHandler(), attachAuth()
+│   ├── http.js          # send(), json(), setCookie(), parseCookies(), readBody()
+│   ├── auth.js          # requireAuth() guard + session-cookie helpers
+│   ├── static.js        # static file serving from public/
+│   ├── config.js        # centralised environment-variable defaults
 │   ├── index.js         # CLI demo entry point
 │   ├── calculator.js    # arithmetic helpers
 │   ├── userStore.js     # in-memory user store with password hashing
 │   ├── sessionStore.js  # cookie-based session tokens with sliding expiry
-│   └── rateLimiter.js   # sliding-window login throttling
+│   ├── rateLimiter.js   # sliding-window login throttling
+│   └── routes
+│       ├── index.js          # registers all route modules with the router
+│       ├── auth.routes.js    # /api/signup, /api/login, /api/logout, /api/me, /api/password, /api/sessions
+│       ├── users.routes.js   # /api/users
+│       └── health.routes.js  # /api/health
 └── test
     ├── calculator.test.js
     ├── userStore.test.js
