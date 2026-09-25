@@ -71,23 +71,43 @@ function sendHtml(res, status, body, headers = {}) {
 
 /**
  * Buffer a request body, rejecting once it grows past `limit` bytes.
+ *
+ * On overflow the remaining data is drained rather than the socket destroyed:
+ * tearing down the connection mid-upload makes the client see ECONNRESET
+ * instead of the 413 we are trying to send.
  */
 function readBody(req, limit = 1e5) {
   return new Promise((resolve, reject) => {
     let size = 0;
+    let settled = false;
     const chunks = [];
 
     req.on('data', (chunk) => {
+      if (settled) return;
+
       size += chunk.length;
       if (size > limit) {
+        settled = true;
+        chunks.length = 0;
+        // Keep draining so the request finishes and the response can be sent.
+        req.resume();
         reject(new HttpError(413, 'Payload too large.'));
-        req.destroy();
         return;
       }
       chunks.push(chunk);
     });
-    req.on('end', () => resolve(Buffer.concat(chunks).toString('utf8')));
-    req.on('error', reject);
+
+    req.on('end', () => {
+      if (settled) return;
+      settled = true;
+      resolve(Buffer.concat(chunks).toString('utf8'));
+    });
+
+    req.on('error', (err) => {
+      if (settled) return;
+      settled = true;
+      reject(err);
+    });
   });
 }
 

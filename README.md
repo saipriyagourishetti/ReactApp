@@ -20,7 +20,19 @@ A small, dependency-free Node.js project created purely for testing repositories
 │   ├── styles.css      # shared stylesheet
 │   └── app.js          # client-side signup + login validation and fetch
 ├── src
-│   ├── server.js        # zero-dependency HTTP server + auth API
+│   ├── server.js        # process entrypoint: shared stores, listen, banner
+│   ├── app.js           # composition root: builds deps + middleware chain
+│   ├── config.js        # all env-var reading, in one place
+│   ├── http.js          # HttpError, senders, body parsing, request helpers
+│   ├── middleware.js    # compose(), context, logger, error handler
+│   ├── router.js        # declarative route table, 405/404 handling
+│   ├── static.js        # static file middleware with traversal guard
+│   ├── auth.js          # session plumbing: issue, resolve, requireAuth
+│   ├── routes
+│   │   ├── index.js         # merges the route tables
+│   │   ├── auth.routes.js   # signup, login, logout, me, sessions, password
+│   │   ├── users.routes.js  # user listing + ?role= filter
+│   │   └── health.routes.js # liveness probe
 │   ├── index.js         # CLI demo entry point
 │   ├── calculator.js    # arithmetic helpers
 │   ├── userStore.js     # in-memory user store with password hashing
@@ -32,7 +44,56 @@ A small, dependency-free Node.js project created purely for testing repositories
     ├── auth.test.js          # password hashing + credential verification
     ├── sessionStore.test.js  # session tokens, TTL and cookie helpers
     ├── rateLimiter.test.js   # sliding-window throttling
+    ├── config.test.js        # env parsing and overrides
+    ├── http.test.js          # errors, senders, body parsing
+    ├── middleware.test.js    # chain order, error handling, context
+    ├── router.test.js        # matching, 405/Allow, HEAD fallback
+    ├── app.test.js           # isolated apps via createApp()
     └── server.test.js        # end-to-end HTTP tests for every endpoint
+```
+
+## Architecture
+
+Requests flow through a small Koa-style middleware chain, assembled once in
+[`src/app.js`](src/app.js):
+
+```
+request
+  → requestLogger      (times the response, logs on finish)
+  → errorHandler       (turns thrown HttpErrors into JSON responses)
+  → attachAuth         (resolves the session cookie onto ctx.auth)
+  → router             (exact METHOD + path match → handler)
+  → staticHandler      (serves public/ for anything left over)
+```
+
+Each middleware is `async (ctx, next)`. The `ctx` object carries the request,
+response, parsed `pathname`/`query` and **all injected dependencies** — the
+stores and config are never imported directly by a handler:
+
+```js
+function health(ctx) {
+  sendJson(ctx.res, 200, { users: ctx.users.size, sessions: ctx.sessions.size });
+}
+```
+
+Two conventions keep the handlers short:
+
+- **Throw, don't plumb.** Validation failures `throw badRequest('…', 'email')`
+  and the error middleware renders them, so handlers have no `return` ladders.
+- **Routes are data.** A route is a `'METHOD /path'` key, which makes `405`
+  responses with a correct `Allow` header automatic and lets duplicate routes
+  fail at startup rather than silently overriding each other.
+
+Because every dependency is injected, `createApp()` returns a fully isolated
+server — useful in tests:
+
+```js
+const { createApp } = require('./src/app');
+
+const app = createApp({
+  config: { seedUsers: [], loginLimit: 2, sessionTtlMs: 1000 },
+});
+app.server.listen(0);
 ```
 
 ## Usage
@@ -65,12 +126,22 @@ PORT=8080 npm start
 
 ### Environment variables
 
+All of these are read in exactly one place, [`src/config.js`](src/config.js).
+
 | Variable | Default | Description |
 | --- | --- | --- |
 | `PORT` | `3000` | Port the HTTP server listens on |
 | `COOKIE_SECURE` | unset | Set to `1` to add `Secure` to the session cookie (HTTPS only) |
 | `QUIET` | unset | Set to `1` to silence the per-request access log |
 | `NODE_ENV` | unset | `test` also silences the access log |
+| `SESSION_TTL_MINUTES` | `30` | Idle timeout before a session expires |
+| `LOGIN_LIMIT` | `5` | Failed logins allowed per ip+email inside the window |
+| `LOGIN_WINDOW_MINUTES` | `15` | Length of the rate-limit window |
+| `SWEEP_INTERVAL_MINUTES` | `5` | How often expired sessions are purged |
+| `MAX_BODY_BYTES` | `100000` | Request bodies larger than this get a `413` |
+
+Booleans accept `1`, `true`, `yes` or `on`. Invalid or non-positive numbers fall
+back to the default rather than crashing the server.
 
 Run the original CLI demo:
 
@@ -119,7 +190,7 @@ which emails are registered.
 | `GET` | `/api/me` | required | Returns `{ user, session }` for the caller and slides the session expiry forward; `401` without a valid cookie |
 | `GET` | `/api/sessions` | required | Lists the caller's active sessions (`createdAt`, `lastSeenAt`, `expiresAt`, `userAgent`, `ip`) — never any tokens |
 | `POST`/`PUT` | `/api/password` | required | Changes the password from `{ currentPassword, newPassword }` — returns `200 { user, revokedSessions }`, `400` on weak/reused passwords, `401` on a wrong current password |
-| `GET` | `/api/users` | – | Returns `{ count, users }` for everything currently in the store |
+| `GET` | `/api/users` | – | Returns `{ count, users }`; accepts `?role=user\|editor\|admin` to filter, `400` on an unknown role |
 | `GET` | `/api/health` | – | Liveness probe: `{ status, uptimeSeconds, startedAt, users, sessions, node }` |
 
 Any other `/api/*` path returns a JSON `404`, and a wrong method on a known
