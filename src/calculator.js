@@ -55,6 +55,19 @@ function average(values) {
   return sum(values) / values.length;
 }
 
+function percentage(value, percent) {
+  assertNumbers(value, percent);
+  return (value * percent) / 100;
+}
+
+function sqrt(value) {
+  assertNumbers(value);
+  if (value < 0) {
+    throw new RangeError('sqrt() does not accept negative numbers');
+  }
+  return Math.sqrt(value);
+}
+
 module.exports = {
   add,
   subtract,
@@ -63,4 +76,6 @@ module.exports = {
   power,
   sum,
   average,
+  percentage,
+  sqrt,
 };

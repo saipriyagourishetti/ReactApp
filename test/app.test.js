@@ -177,6 +177,8 @@ test('the router exposes the full API surface', async () => {
   const app = await startApp();
   try {
     assert.deepEqual(app.router.list(), [
+      'GET /api/calc/percentage',
+      'GET /api/calc/sqrt',
       'GET /api/health',
       'GET /api/me',
       'GET /api/sessions',

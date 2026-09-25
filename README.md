@@ -192,6 +192,8 @@ which emails are registered.
 | `POST`/`PUT` | `/api/password` | required | Changes the password from `{ currentPassword, newPassword }` — returns `200 { user, revokedSessions }`, `400` on weak/reused passwords, `401` on a wrong current password |
 | `GET` | `/api/users` | – | Returns `{ count, users }`; accepts `?role=user\|editor\|admin` to filter, `400` on an unknown role |
 | `GET` | `/api/health` | – | Liveness probe: `{ status, uptimeSeconds, startedAt, users, sessions, node }` |
+| `GET` | `/api/calc/percentage?value=&percent=` | – | Returns `{ result }` where result = (value × percent) / 100; `400` on non-numeric inputs |
+| `GET` | `/api/calc/sqrt?value=` | – | Returns `{ result }` where result = √value; `400` on non-numeric or negative input |
 
 Any other `/api/*` path returns a JSON `404`, and a wrong method on a known
 route returns `405` with an `Allow` header.
@@ -278,6 +280,8 @@ including at least one letter and one number.
 | `power(base, exp)` | Returns `base ** exp` |
 | `sum(values)` | Sum of an array of numbers |
 | `average(values)` | Mean of a non-empty array |
+| `percentage(value, percent)` | Returns `(value * percent) / 100`, throws `TypeError` on non-numeric inputs |
+| `sqrt(value)` | Returns `Math.sqrt(value)`, throws `RangeError` on negative input, `TypeError` on non-numeric |
 
 ### `UserStore`
 

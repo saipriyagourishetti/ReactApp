@@ -27,7 +27,8 @@ ReactApp-git/
 │       ├── index.js          ← Registers all route modules with the router
 │       ├── auth.routes.js    ← /api/signup, /api/login, /api/logout, /api/me, /api/password, /api/sessions
 │       ├── users.routes.js   ← /api/users
-│       └── health.routes.js  ← /api/health
+│       ├── health.routes.js  ← /api/health
+│       └── calc.routes.js    ← /api/calc/percentage, /api/calc/sqrt
 ├── public/         ← Static HTML/JS/CSS (served by static.js)
 ├── test/           ← Node built-in test runner (node:test)
 └── client/         ← Angular 17 SPA (separate package, standalone components)
@@ -148,6 +149,8 @@ Key test config files in `client/`:
 | POST/PUT | `/api/password` | required | `200 { user, revokedSessions }` | `400` weak/reused, `401` wrong current password |
 | GET | `/api/users` | – | `200 { count, users[] }` | — |
 | GET | `/api/health` | – | `200 { status, uptimeSeconds, … }` | — |
+| GET | `/api/calc/percentage?value=&percent=` | – | `200 { result }` | `400` non-numeric params |
+| GET | `/api/calc/sqrt?value=` | – | `200 { result }` | `400` non-numeric or negative |
 
 Error responses: `{ error: string, field?: string }` — `field` maps to the offending form control name.
 

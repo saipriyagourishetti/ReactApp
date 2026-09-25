@@ -3,6 +3,7 @@
 const authRoutes = require('./auth.routes');
 const userRoutes = require('./users.routes');
 const healthRoutes = require('./health.routes');
+const calcRoutes = require('./calc.routes');
 
 /**
  * The complete API surface, assembled from one module per concern.
@@ -24,6 +25,6 @@ function mergeRoutes(...tables) {
   return merged;
 }
 
-const routes = mergeRoutes(authRoutes.routes, userRoutes.routes, healthRoutes.routes);
+const routes = mergeRoutes(authRoutes.routes, userRoutes.routes, healthRoutes.routes, calcRoutes.routes);
 
 module.exports = { routes, mergeRoutes };
