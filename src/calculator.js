@@ -40,6 +40,16 @@ function power(base, exponent) {
   return base ** exponent;
 }
 
+function percentage(value, percent) {
+  assertNumbers(value, percent);
+  return (value * percent) / 100;
+}
+
+function sqrt(value) {
+  assertNumbers(value);
+  return Math.sqrt(value);
+}
+
 function sum(values) {
   if (!Array.isArray(values)) {
     throw new TypeError('sum() expects an array of numbers');
@@ -61,6 +71,8 @@ module.exports = {
   multiply,
   divide,
   power,
+  percentage,
+  sqrt,
   sum,
   average,
 };
