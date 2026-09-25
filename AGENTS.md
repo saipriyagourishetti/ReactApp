@@ -10,11 +10,25 @@ Despite the directory name `ReactApp-git`, this is an **Angular 17 + Node.js** p
 
 ```
 ReactApp-git/
-├── src/            ← Zero-dependency Node HTTP server (CommonJS)
-│   ├── server.js   ← Main server entrypoint (port 3000)
+├── src/                  ← Zero-dependency Node HTTP server (CommonJS)
+│   ├── server.js         ← HTTP server entry point (creates server, seeds demo account)
+│   ├── app.js            ← Request handler — composes middleware and router
+│   ├── router.js         ← Method+path dispatcher; returns 404/405 for unknown routes
+│   ├── middleware.js     ← compose(), requestLogger(), errorHandler(), attachAuth()
+│   ├── http.js           ← send(), json(), setCookie(), parseCookies(), readBody()
+│   ├── auth.js           ← requireAuth() guard + session-cookie helpers
+│   ├── static.js         ← Static file serving from public/
+│   ├── config.js         ← Centralised environment-variable defaults
 │   ├── calculator.js
-│   └── userStore.js
-├── public/         ← Static HTML/JS/CSS (served by server.js, legacy)
+│   ├── userStore.js
+│   ├── sessionStore.js   ← Cookie-based session tokens with sliding expiry
+│   ├── rateLimiter.js    ← Sliding-window login throttling
+│   └── routes/
+│       ├── index.js          ← Registers all route modules with the router
+│       ├── auth.routes.js    ← /api/signup, /api/login, /api/logout, /api/me, /api/password, /api/sessions
+│       ├── users.routes.js   ← /api/users
+│       └── health.routes.js  ← /api/health
+├── public/         ← Static HTML/JS/CSS (served by static.js)
 ├── test/           ← Node built-in test runner (node:test)
 └── client/         ← Angular 17 SPA (separate package, standalone components)
     └── src/app/
@@ -124,15 +138,22 @@ Key test config files in `client/`:
 
 ## API contract (shared by server and Angular client)
 
-| Method | Route | Success | Error codes |
-|--------|-------|---------|-------------|
-| GET | `/api/users` | `200 { count, users[] }` | — |
-| POST | `/api/signup` | `201 { user }` | `400` validation, `409` duplicate email |
-| POST | `/api/login` | `200 { user }` | `400` missing fields, `401` bad credentials |
+| Method | Route | Auth | Success | Error codes |
+|--------|-------|------|---------|-------------|
+| POST | `/api/signup` | – | `201 { user }` + session cookie | `400` validation, `409` duplicate email |
+| POST | `/api/login` | – | `200 { user }` + session cookie | `400` missing fields, `401` bad credentials, `429` throttled |
+| POST | `/api/logout` | optional | `200 { ok, destroyed }` | — |
+| GET | `/api/me` | required | `200 { user, session }` | `401` no valid session |
+| GET | `/api/sessions` | required | `200 { sessions[] }` | `401` no valid session |
+| POST/PUT | `/api/password` | required | `200 { user, revokedSessions }` | `400` weak/reused, `401` wrong current password |
+| GET | `/api/users` | – | `200 { count, users[] }` | — |
+| GET | `/api/health` | – | `200 { status, uptimeSeconds, … }` | — |
 
 Error responses: `{ error: string, field?: string }` — `field` maps to the offending form control name.
 
 Password rules enforced on both client and server: ≥8 chars, at least one letter and one number.
+
+Failed logins are throttled per `ip|email` pair: 5 attempts per 15 minutes (`429` with `Retry-After`).
 
 ---
 
