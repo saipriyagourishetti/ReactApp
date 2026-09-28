@@ -29,6 +29,20 @@ test('power() raises to an exponent', () => {
   assert.equal(calculator.power(2, 10), 1024);
 });
 
+test('percentage() returns the percent of a value', () => {
+  assert.equal(calculator.percentage(200, 10), 20);
+  assert.equal(calculator.percentage(50, 0), 0);
+});
+
+test('sqrt() returns the square root', () => {
+  assert.equal(calculator.sqrt(9), 3);
+  assert.equal(calculator.sqrt(0), 0);
+});
+
+test('sqrt() rejects negative input', () => {
+  assert.throws(() => calculator.sqrt(-1), RangeError);
+});
+
 test('sum() adds every item of an array', () => {
   assert.equal(calculator.sum([1, 2, 3, 4, 5]), 15);
   assert.equal(calculator.sum([]), 0);

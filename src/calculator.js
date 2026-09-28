@@ -45,12 +45,13 @@ function percentage(value, percent) {
   return (value * percent) / 100;
 }
 
-// function sqrt(value) {
-//   assertNumbers(value);
-//   return Math.sqrt(value);
-// }
-
-
+function sqrt(value) {
+  assertNumbers(value);
+  if (value < 0) {
+    throw new RangeError('sqrt() expects a non-negative number');
+  }
+  return Math.sqrt(value);
+}
 
 function sum(values) {
   if (!Array.isArray(values)) {
