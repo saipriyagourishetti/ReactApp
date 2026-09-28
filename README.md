@@ -1,6 +1,6 @@
-# githubtest-dummy-project
+# Angular 17 + Node.js Project
 
-A small, dependency-free Node.js project created purely for testing repositories, CI pipelines and tooling.
+A full-stack project combining a zero-dependency Node.js HTTP server with an Angular 17 single-page application, created for testing repositories, CI pipelines and tooling.
 
 ## Requirements
 
