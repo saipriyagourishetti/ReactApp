@@ -1,8 +1,9 @@
 import { Component, inject, signal } from '@angular/core';
 import { FormBuilder, FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
-import { RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 
 import { ApiError, ApiService } from '../core/api.service';
+import { AuthService } from '../core/auth.service';
 import { ToastService } from '../core/toast.service';
 import { emailFormat } from '../core/validators';
 import { RevealDirective } from '../shared/reveal.directive';
@@ -17,6 +18,10 @@ const DEMO_PASSWORD = 'analytical1';
  * Login page — the Reactive Forms replacement for `initLogin` in
  * public/app.js, including the "Fill the form" demo shortcut and the
  * copy-to-clipboard button from `initCopy` in ui.js.
+ *
+ * On success the user is redirected to `returnUrl` (from query params) or
+ * /dashboard, and `AuthService.currentUser` is updated so the header and
+ * guards can react immediately.
  */
 @Component({
   selector: 'app-login',
@@ -28,7 +33,10 @@ const DEMO_PASSWORD = 'analytical1';
 export class LoginComponent {
   private readonly fb = inject(FormBuilder);
   private readonly api = inject(ApiService);
+  private readonly auth = inject(AuthService);
   private readonly toast = inject(ToastService);
+  private readonly router = inject(Router);
+  private readonly route = inject(ActivatedRoute);
 
   readonly demoEmail = DEMO_EMAIL;
   readonly demoPassword = DEMO_PASSWORD;
@@ -95,12 +103,12 @@ export class LoginComponent {
     this.api.login({ email: email.trim(), password }).subscribe({
       next: ({ user }) => {
         this.submitting.set(false);
-        this.form.reset();
-        this.status.set({
-          message: `Logged in as ${user.name} (${user.role}).`,
-          kind: 'success',
-        });
+        // Update shared auth state so the header and guards reflect the new session.
+        this.auth.currentUser.set(user);
         this.toast.success(`Welcome back, ${user.name}!`);
+        // Redirect to the intended page or the dashboard.
+        const returnUrl = this.route.snapshot.queryParamMap.get('returnUrl') ?? '/dashboard';
+        void this.router.navigateByUrl(returnUrl);
       },
       error: (err: ApiError) => {
         this.submitting.set(false);

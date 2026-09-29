@@ -33,6 +33,8 @@ class HttpError extends Error {
 const badRequest = (message, field) => new HttpError(400, message, { field });
 /** 401 — authentication is missing or failed. */
 const unauthorized = (message, options) => new HttpError(401, message, options);
+/** 403 — authenticated but not permitted. */
+const forbidden = (message) => new HttpError(403, message);
 /** 404 — no such resource. */
 const notFound = (message) => new HttpError(404, message);
 /** 409 — conflicts with existing state, e.g. a duplicate email. */
@@ -160,6 +162,7 @@ module.exports = {
   HttpError,
   badRequest,
   unauthorized,
+  forbidden,
   notFound,
   conflict,
   sendJson,

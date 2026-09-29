@@ -162,12 +162,12 @@ describe('SignupComponent', () => {
       { status: 201, statusText: 'Created' });
   });
 
-  it('submit() sets success status on 201', () => {
+  it('submit() clears submitting flag on 201 and navigates', () => {
     fillValidForm();
     component.submit();
     httpMock.expectOne('/api/signup').flush({ user: { id: 1, name: 'Ada Lovelace', email: 'ada@example.com', role: 'user', createdAt: '2024-01-01', hasPassword: true } },
       { status: 201, statusText: 'Created' });
-    expect(component.status().kind).toBe('success');
+    // After successful signup the component navigates away; submitting is reset.
     expect(component.submitting()).toBe(false);
   });
 

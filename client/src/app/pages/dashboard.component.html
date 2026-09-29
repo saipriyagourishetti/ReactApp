@@ -53,10 +53,10 @@
     <header class="site-header" style="position: relative; margin: -36px -40px 32px; border-radius: 0">
       <nav class="nav container" style="max-width: 100%; padding: 0 40px">
         <div style="display: flex; align-items: center; gap: 14px">
-          <div class="avatar-sm" aria-hidden="true">AL</div>
+          <div class="avatar-sm" aria-hidden="true">{{ avatarInitials() }}</div>
           <div>
-            <div style="font-weight: 600; font-size: 0.95rem">Ada Lovelace</div>
-            <div style="font-size: 0.8rem; color: var(--muted)">Administrator</div>
+            <div style="font-weight: 600; font-size: 0.95rem">{{ auth.currentUser()?.displayName || auth.currentUser()?.name || 'User' }}</div>
+            <div style="font-size: 0.8rem; color: var(--muted)">{{ auth.currentUser()?.role }}</div>
           </div>
         </div>
         <ul class="nav-links">
@@ -74,7 +74,7 @@
     <div style="margin-bottom: 28px">
       <p class="eyebrow" style="display: inline-block; margin-bottom: 8px">Overview</p>
       <h1 style="margin: 0 0 6px; font-size: clamp(1.5rem, 3vw, 2rem)">
-        Good morning, <span class="accent">Ada</span> 👋
+        Hello, <span class="accent">{{ greetingName() }}</span>
       </h1>
       <p style="color: var(--muted); margin: 0">
         Here's what's happening with your project today.
@@ -87,7 +87,7 @@
         <div class="stat-num accent">{{ userCount() }}</div>
         <span class="stat-trend up">live from /api/users</span>
       </div>
-      @for (card of cards; track card.label) {
+      @for (card of cards(); track card.label) {
         <div class="stat-card">
           <div class="stat-label">{{ card.label }}</div>
           <div class="stat-num" [style.color]="card.color">{{ card.value }}</div>
@@ -136,10 +136,16 @@
         <div class="panel">
           <div class="panel-header">
             <h2 class="panel-title">System Info</h2>
-            <span class="badge badge-success">Healthy</span>
+            @if (healthy() === null) {
+              <span class="badge">Checking…</span>
+            } @else if (healthy()) {
+              <span class="badge badge-success">Healthy</span>
+            } @else {
+              <span class="badge badge-error">Degraded</span>
+            }
           </div>
           <div style="display: flex; flex-direction: column; gap: 10px; font-size: 0.9rem">
-            @for (row of systemInfo; track row.label) {
+            @for (row of systemInfo(); track row.label) {
               <div
                 style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid var(--border)"
               >

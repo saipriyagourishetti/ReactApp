@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
 import { DOCUMENT } from '@angular/common';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 
 import { SiteHeaderComponent } from './site-header.component';
 import { ThemeService } from '../core/theme.service';
@@ -11,7 +12,7 @@ describe('SiteHeaderComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [SiteHeaderComponent, RouterTestingModule],
+      imports: [SiteHeaderComponent, RouterTestingModule, HttpClientTestingModule],
     }).compileComponents();
 
     fixture = TestBed.createComponent(SiteHeaderComponent);

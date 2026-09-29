@@ -12,6 +12,16 @@ export interface User {
   role: UserRole;
   createdAt: string;
   hasPassword: boolean;
+  /** Optional display name set via PATCH /api/users/:id */
+  displayName?: string;
+  /** Short bio set via PATCH /api/users/:id (max 280 chars) */
+  bio?: string;
+  /** Notification preferences set via PATCH /api/users/:id */
+  notifications?: {
+    emailAlerts?: boolean;
+    weeklyDigest?: boolean;
+    securityAlerts?: boolean;
+  };
 }
 
 /** Successful response body for /api/signup and /api/login. */
@@ -38,4 +48,53 @@ export interface SignupPayload {
 export interface LoginPayload {
   email: string;
   password: string;
+}
+
+/** Response body for GET /api/me */
+export interface MeResponse {
+  user: User;
+  session: SessionPublic;
+}
+
+/** Public session object (no token) returned by the API */
+export interface SessionPublic {
+  createdAt: string;
+  lastSeenAt: string;
+  expiresAt: string;
+  /** Only present in GET /api/sessions list */
+  userAgent?: string;
+  ip?: string;
+  current?: boolean;
+}
+
+/** Response body for GET /api/sessions */
+export interface SessionsResponse {
+  count: number;
+  sessions: SessionPublic[];
+}
+
+/** Response body for GET /api/health */
+export interface HealthResponse {
+  status: string;
+  uptimeSeconds: number;
+  users: number;
+  sessions: number;
+  node: string;
+}
+
+/** Payload for PATCH /api/users/:id */
+export interface UpdateProfilePayload {
+  displayName?: string;
+  bio?: string;
+  notifications?: {
+    emailAlerts?: boolean;
+    weeklyDigest?: boolean;
+    securityAlerts?: boolean;
+  };
+}
+
+/** Payload for POST /api/password */
+export interface ChangePasswordPayload {
+  currentPassword: string;
+  newPassword: string;
 }

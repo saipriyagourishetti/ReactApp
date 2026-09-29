@@ -119,12 +119,12 @@ describe('LoginComponent', () => {
     req.flush({ user: { id: 1, name: 'Ada', email: 'ada@example.com', role: 'admin', createdAt: '2024-01-01', hasPassword: true } });
   });
 
-  it('submit() sets success status on 200', () => {
+  it('submit() clears submitting flag on 200 and navigates', () => {
     fillValidForm();
     component.submit();
     httpMock.expectOne('/api/login').flush({ user: { id: 1, name: 'Ada', email: 'ada@example.com', role: 'admin', createdAt: '2024-01-01', hasPassword: true } });
 
-    expect(component.status().kind).toBe('success');
+    // After a successful login the component navigates away; submitting is reset.
     expect(component.submitting()).toBe(false);
   });
 

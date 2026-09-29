@@ -132,10 +132,17 @@ class UserStore {
     if (!user) {
       throw new Error(`No user found with id ${id}`);
     }
-    const allowed = ['name', 'email', 'role'];
+    const allowed = ['name', 'email', 'role', 'displayName', 'bio', 'notifications'];
     for (const [key, value] of Object.entries(changes)) {
       if (!allowed.includes(key)) continue;
-      user[key] = key === 'email' ? String(value).toLowerCase() : value;
+      if (key === 'email') {
+        user[key] = String(value).toLowerCase();
+      } else if (key === 'notifications') {
+        // Merge notification preferences rather than wholesale replace.
+        user.notifications = { ...(user.notifications ?? {}), ...value };
+      } else {
+        user[key] = value;
+      }
     }
     return UserStore.toPublic(user);
   }

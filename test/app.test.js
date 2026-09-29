@@ -181,6 +181,7 @@ test('the router exposes the full API surface', async () => {
       'GET /api/me',
       'GET /api/sessions',
       'GET /api/users',
+      'PATCH /api/users/:id',
       'POST /api/login',
       'POST /api/logout',
       'POST /api/password',
