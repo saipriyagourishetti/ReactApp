@@ -44,7 +44,7 @@ function loadConfig(overrides = {}, env = process.env) {
     quiet: toBool(env.QUIET) || env.NODE_ENV === 'test',
 
     /** Session lifetime; refreshed on every authenticated request. */
-    sessionTtlMs: toInt(env.SESSION_TTL_MINUTES, 30) * MINUTE_MS,
+    sessionTtlMs: toInt(env.SESSION_TTL_MINS, 30) * MINUTE_MS,
 
     /** Failed logins allowed per ip+email inside the window. */
     loginLimit: toInt(env.LOGIN_LIMIT, 5),

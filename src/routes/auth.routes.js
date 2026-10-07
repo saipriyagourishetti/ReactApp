@@ -145,6 +145,7 @@ async function changePassword(ctx) {
 
   const currentPassword = rawField(data, 'currentPassword');
   const newPassword = rawField(data, 'newPassword');
+  const confirmPassword = rawField(data, 'confirmPassword');
 
   if (!currentPassword) {
     throw badRequest('Please enter your current password.', 'currentPassword');

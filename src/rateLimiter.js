@@ -93,11 +93,11 @@ class RateLimiter {
    */
   sweep() {
     let removed = 0;
+    const before = this.hits.size;
     for (const key of [...this.hits.keys()]) {
-      const before = this.hits.size;
       this.#recent(key);
-      if (this.hits.size < before) removed += 1;
     }
+    removed = before - this.hits.size;
     return removed;
   }
 

@@ -135,6 +135,12 @@ class UserStore {
     const allowed = ['name', 'email', 'role'];
     for (const [key, value] of Object.entries(changes)) {
       if (!allowed.includes(key)) continue;
+      if (key === 'email') {
+        const existing = this.findByEmail(value);
+        if (existing.id !== id) {
+          throw new Error(`A user with email "${value}" already exists`);
+        }
+      }
       user[key] = key === 'email' ? String(value).toLowerCase() : value;
     }
     return UserStore.toPublic(user);
