@@ -1,5 +1,6 @@
 'use strict';
 
+// Calculator module: basic arithmetic helpers with input validation.
 /**
  * Simple calculator utilities used to demonstrate unit testing.
  */
