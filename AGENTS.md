@@ -31,6 +31,11 @@ ReactApp-git/
 │       └── calc.routes.js    ← /api/calc/percentage, /api/calc/sqrt
 ├── public/         ← Static HTML/JS/CSS (served by static.js)
 ├── test/           ← Node built-in test runner (node:test)
+├── e2e/            ← Playwright + TypeScript UI tests, Page Object Model (separate package)
+│   ├── pages/      ← BasePage + page objects (locators/actions, no assertions)
+│   ├── fixtures/   ← test.fixtures.ts registers page objects; specs import test/expect from here
+│   ├── utils/      ← helpers (BASE_URL, DEMO_USER, random data)
+│   └── tests/      ← *.spec.ts files
 └── client/         ← Angular 17 SPA (separate package, standalone components)
     └── src/app/
         ├── core/   ← Services, models, validators
@@ -38,7 +43,7 @@ ReactApp-git/
         └── shared/ ← Shared components and directives
 ```
 
-Two separate `package.json` files — **not** an npm workspace, no hoisting.
+Three separate `package.json` files (root, `client/`, `e2e/`) — **not** an npm workspace, no hoisting.
 
 ---
 
@@ -63,6 +68,16 @@ npm run typecheck  # tsc -p tsconfig.app.json --noEmit
 npm run watch      # ng build --watch --configuration development
 npm test           # jest (189 Angular unit tests — no browser required)
 ```
+
+### Playwright e2e (run from `e2e/`)
+
+```sh
+npm install && npx playwright install chromium   # first time
+npm test           # needs both servers running (see start order below)
+npm run typecheck  # tsc --noEmit
+```
+
+New page objects must be exported from `pages/index.ts` and registered in `fixtures/test.fixtures.ts`.
 
 ---
 
@@ -162,7 +177,7 @@ Failed logins are throttled per `ip|email` pair: 5 attempts per 15 minutes (`429
 
 ## Lockfile
 
-Only `client/package-lock.json` exists (lockfileVersion 3, npm v7+). No lockfile at repo root.
+`client/package-lock.json` and `e2e/package-lock.json` exist (npm v7+). No lockfile at repo root.
 
 ---
 
