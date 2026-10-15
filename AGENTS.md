@@ -30,6 +30,7 @@ ReactApp-git/
 │       └── health.routes.js  ← /api/health
 ├── public/         ← Static HTML/JS/CSS (served by static.js)
 ├── test/           ← Node built-in test runner (node:test)
+├── e2e/            ← Playwright + TypeScript E2E scaffold (separate package; see e2e/README.md)
 └── client/         ← Angular 17 SPA (separate package, standalone components)
     └── src/app/
         ├── core/   ← Services, models, validators
@@ -37,7 +38,7 @@ ReactApp-git/
         └── shared/ ← Shared components and directives
 ```
 
-Two separate `package.json` files — **not** an npm workspace, no hoisting.
+Three separate `package.json` files (root, `client/`, `e2e/`) — **not** an npm workspace, no hoisting.
 
 ---
 
